@@ -25,6 +25,46 @@
                 </div>
             </div>
         </nav>
+        <div id="loginDialog" class="auth-modal">
+            <div class="auth-modal-content">
+                <span class="auth-close" onclick="closeModal()">&times;</span>
+                <h2 class="auth-modal-title">Log In</h2>
+                <form class="loginForm" action="/api/user/auth" method="put" onsubmit="loginUser(event)">
+                    <div class="auth-input-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" name="email" required>
+                    </div>
+                    <div class="auth-input-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" name="password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Log In</button>
+                    <button type="button" class="auth-btn switch-modal" data-target="registerDialog">Sign Up</button>
+                </form>
+            </div>
+        </div>
+        <div id="registerDialog" class="auth-modal">
+            <div class="auth-modal-content">
+                <span class="auth-close" onclick="closeModal()">&times;</span>
+                <h2 class="auth-modal-title">Sign Up</h2>
+                <form class="signupForm" action="/api/user" method="post" onsubmit="registerUser(event)">
+                    <div class="auth-input-group">
+                        <label for="registerUsername">Username</label>
+                        <input type="text" id="registerUsername" name="username" required>
+                    </div>
+                    <div class="auth-input-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" name="email" required>
+                    </div>
+                    <div class="auth-input-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" name="password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Sign Up</button>
+                    <button type="button" class="auth-btn switch-modal" data-target="loginDialog">Log In</button>
+                </form>
+            </div>
+        </div>
     </header>
     <main>
         <section class="intro">
@@ -37,46 +77,5 @@
             </div>
         </section>
     </main>
-    <div id="loginDialog" class="auth-modal">
-        <div class="auth-modal-content">
-            <span class="auth-close" onclick="closeModal()">&times;</span>
-            <h2 class="auth-modal-title">Log In</h2>
-            <form class="loginForm" action="/api/user/auth" method="put" onsubmit="loginUser(event)">
-                <div class="auth-input-group">
-                    <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" name="email" required>
-                </div>
-                <div class="auth-input-group">
-                    <label for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" name="password" required>
-                </div>
-                <button type="submit" class="auth-btn">Log In</button>
-                <button type="button" class="auth-btn switch-modal" data-target="registerDialog">Sign Up</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="registerDialog" class="auth-modal">
-        <div class="auth-modal-content">
-            <span class="auth-close" onclick="closeModal()">&times;</span>
-            <h2 class="auth-modal-title">Sign Up</h2>
-            <form class="signupForm" action="/api/user" method="post" onsubmit="registerUser(event)">
-                <div class="auth-input-group">
-                    <label for="registerUsername">Username</label>
-                    <input type="text" id="registerUsername" name="username" required>
-                </div>
-                <div class="auth-input-group">
-                    <label for="registerEmail">Email</label>
-                    <input type="email" id="registerEmail" name="email" required>
-                </div>
-                <div class="auth-input-group">
-                    <label for="registerPassword">Password</label>
-                    <input type="password" id="registerPassword" name="password" required>
-                </div>
-                <button type="submit" class="auth-btn">Sign Up</button>
-                <button type="button" class="auth-btn switch-modal" data-target="loginDialog">Log In</button>
-            </form>
-        </div>
-    </div>
 </body>
 </html>
