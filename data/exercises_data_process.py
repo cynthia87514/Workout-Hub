@@ -1,54 +1,60 @@
 import json
-import sys, os
+import sys
+import os
+from sqlalchemy import Column, Integer, String, JSON
 
 # 添加項目根目錄到 sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from dbconfig import Database
+from dbconfig import SessionLocal, Base, engine
+
+# 定義 Model
+class Exercise(Base):
+    __tablename__ = "exercises"
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    name = Column(String(255), nullable=False, unique=True, index=True)
+    force = Column(String(255))
+    level = Column(String(255), nullable=False)
+    mechanic = Column(String(255))
+    equipment = Column(String(255))
+    primary_muscles = Column(JSON, nullable=False)
+    secondary_muscles = Column(JSON)
+    instructions = Column(JSON, nullable=False)
+    category = Column(String(255), nullable=False)
+    images = Column(JSON, nullable=False)
 
 # 創建 Table
 def create_table():
-    create_table_query = """
-    CREATE TABLE IF NOT EXISTS exercises (
-        `id` INT AUTO_INCREMENT PRIMARY KEY,
-        `name` TEXT NOT NULL,
-        `force` VARCHAR(255),
-        `level` VARCHAR(255) NOT NULL,
-        `mechanic` VARCHAR(255),
-        `equipment` VARCHAR(255),
-        `primary_muscles` JSON,
-        `secondary_muscles` JSON,
-        `instructions` JSON,
-        `category` VARCHAR(255) NOT NULL,
-        `images` JSON
-    )
-    """
-    Database.execute_query(create_table_query)
+    Base.metadata.create_all(bind=engine)
 
 # 導入資料
 def import_data(json_file):
     file_path = os.path.join(os.path.dirname(__file__), json_file)
     with open(file_path, "r", encoding="utf-8") as file:
         data = json.load(file)
-    
-    insert_query = """
-    INSERT INTO exercises (`name`, `force`, `level`, `mechanic`, `equipment`, `primary_muscles`, `secondary_muscles`, `instructions`, `category`, `images`)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    """
-    
-    for exercise in data["exercises"]:
-        Database.execute_query(insert_query, (
-            exercise.get("name"),
-            exercise.get("force"),
-            exercise.get("level"),
-            exercise.get("mechanic"),
-            exercise.get("equipment"),
-            json.dumps(exercise.get("primaryMuscles", [])),
-            json.dumps(exercise.get("secondaryMuscles", [])),
-            json.dumps(exercise.get("instructions", [])),
-            exercise.get("category"),
-            json.dumps(exercise.get("images", []))
-        ))
+
+    session = SessionLocal()
+    try:
+        for exercise in data["exercises"]:
+            new_exercise = Exercise(
+                name=exercise.get("name"),
+                force=exercise.get("force"),
+                level=exercise.get("level"),
+                mechanic=exercise.get("mechanic"),
+                equipment=exercise.get("equipment"),
+                primary_muscles=exercise.get("primaryMuscles", []),
+                secondary_muscles=exercise.get("secondaryMuscles", []),
+                instructions=exercise.get("instructions", []),
+                category=exercise.get("category"),
+                images=exercise.get("images", [])
+            )
+            session.add(new_exercise)
+        session.commit()
+    except Exception as e:
+        print(f"Error: {e}")
+        session.rollback()
+    finally:
+        session.close()
 
 def main():
     create_table()
