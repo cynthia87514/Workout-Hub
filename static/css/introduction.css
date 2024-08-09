@@ -46,7 +46,6 @@ main {
 .content h1 {
     margin: 0 0 20px;
     font-size: 48px;
-    font-family: "Caladea", serif;
     font-weight: 700;
     color: #000;
 }
@@ -59,7 +58,6 @@ main {
 .content p {
     margin: 0;
     font-size: 24px;
-    font-family: "Caladea", serif;
     font-weight: 400;
     color: #555;
 }
