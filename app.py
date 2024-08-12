@@ -3,7 +3,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from dbconfig import engine, Base
 from router.exercise import ExerciseRouter
-from router.user import Userrouter
+from router.user import UserRouter
+from router.workout import WorkoutRouter
 
 # 創建所有 table，先執行檢查
 Base.metadata.create_all(bind=engine, checkfirst=True)
@@ -33,4 +34,5 @@ async def index():
     return FileResponse("./static/html/diet.html", media_type="text/html")
 
 app.include_router(ExerciseRouter)
-app.include_router(Userrouter)
+app.include_router(UserRouter)
+app.include_router(WorkoutRouter)
