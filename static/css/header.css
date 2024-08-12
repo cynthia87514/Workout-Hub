@@ -126,6 +126,13 @@ header {
     font-size: 16px;
     cursor: pointer;
 }
+.left,.start, .records, .diet, .profile, .logout, .login, .auth-btn {
+    transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+.left:hover,.start:hover, .records:hover, .diet:hover, .profile:hover, .logout:hover, .login:hover, .auth-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
 .auth-btn:hover {
     background-color: #2980b9;
 }
