@@ -12,7 +12,7 @@ main {
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
-    width: 90%;
+    width: 100%;
     max-width: 1200px;
     padding: 20px;
     border-radius: 10px;
