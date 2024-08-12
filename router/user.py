@@ -7,12 +7,12 @@ from schema.user import UserCreate, UserInDB, Token, UserLogin, UserInResponse, 
 from service.crud import create_user, authenticate_user, get_user_by_email
 from service.auth import create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_remaining_time, oauth2_scheme
 
-Userrouter = APIRouter(
+UserRouter = APIRouter(
     prefix="/api",
     tags=["User"]
 )
 
-@Userrouter.post("/user/auth", response_model=AuthResponse)
+@UserRouter.post("/user/auth", response_model=AuthResponse)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     try:
         create_user(db, user)
@@ -20,7 +20,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@Userrouter.put("/user/auth", response_model=Token)
+@UserRouter.put("/user/auth", response_model=Token)
 def login_for_access_token(user_login: UserLogin, db: Session = Depends(get_db)):
     user = authenticate_user(db, email=user_login.email, password=user_login.password)
     if not user:
@@ -35,7 +35,7 @@ def login_for_access_token(user_login: UserLogin, db: Session = Depends(get_db))
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@Userrouter.get("/user/auth", response_model=UserInResponse)
+@UserRouter.get("/user/auth", response_model=UserInResponse)
 def get_current_user_info(current_user: UserInDB = Depends(get_current_user), token: str = Depends(oauth2_scheme)):
     remaining_time = get_remaining_time(token)
     is_token_valid = remaining_time.total_seconds() > 0
