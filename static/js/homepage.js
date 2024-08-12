@@ -443,6 +443,62 @@ function addExercise() {
         });
     }
 }
+// 儲存運動菜單到 DB
+function saveWorkout() {
+    const exercises = document.querySelectorAll(".exercise");
+    const workoutItems = [];
+
+    exercises.forEach(exercise => {
+        const exerciseName = exercise.querySelector("h3").innerText;
+        const sets = [];
+        exercise.querySelectorAll(".table-row").forEach(row => {
+            const setNumber = parseInt(row.querySelector(".cell:nth-child(1)").innerText);
+            const weight = parseFloat(row.querySelector(".kgInput").value) || null;
+            const reps = parseInt(row.querySelector(".repsInput").value) || null;
+            
+            sets.push({
+                set_number: setNumber,
+                weight: weight,
+                reps: reps
+            });
+        });
+
+        workoutItems.push({
+            name: exerciseName,
+            item_sets: sets
+        });
+    });
+
+    const workoutData = {
+        title: topic.textContent,
+        workout_items: workoutItems
+    };
+
+    const token = localStorage.getItem("token");
+
+    fetch("/api/workout", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(workoutData),
+    })
+    .then(async response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            const err = await response.json();
+            throw new Error(err.detail);
+        }
+    })
+    .then(data => {
+        console.log("Success:", data);
+    })
+    .catch((error) => {
+        console.error("Error:", error.message);
+    });
+}
 // 刪除運動項目
 function deleteExercise(button) {
     const exercise = button.closest(".exercise");
@@ -452,6 +508,7 @@ function deleteExercise(button) {
 function addSetRowHandler(event) {
     addSetRow(event.currentTarget);
 }
+
 // 主邏輯和事件監聽
 document.querySelectorAll(".add-set").forEach(button => {
     button.addEventListener("click", addSetRowHandler);
@@ -504,6 +561,7 @@ document.querySelectorAll(".exercise-remove-btn").forEach(button => {
         deleteExercise(button);
     });
 });
+document.getElementById("saveButton").addEventListener("click", saveWorkout);
 
 // 處理運動標題相關功能
 const topicContainer = document.querySelector(".topic-container");
