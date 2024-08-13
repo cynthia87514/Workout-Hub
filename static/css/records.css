@@ -1,8 +1,13 @@
+.mt-4 {
+    margin-top: 0 !important;
+}
 #calendar {
+    box-sizing: border-box;
     max-width: 1200px;
     width: 100%;
-    height: 640px;
-    margin: 0 auto;
+    height: calc(100vh - 74px);
+    margin-top: 10px;
+    margin-bottom: 10px;
     background-color: #FFFFFF;
     padding: 20px;
     border-radius: 10px;

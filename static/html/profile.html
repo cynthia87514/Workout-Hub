@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workout Hub</title>
     <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/header.css"/>
     <link rel="stylesheet" type="text/css" href="/static/css/profile.css"/>
     <script src="/static/js/header.js" defer></script>
@@ -26,6 +29,93 @@
             </div>
         </nav>
     </header>
-    <div class="headline">Profile</div>
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Profile Picture Section -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <img src="/static/images/小芝麻.jpg" class="rounded-circle" alt="User Avatar" width="200" height="200">
+                        <h3 class="mt-3">John Doe</h3>
+                        <p>Full Stack Developer</p>
+                        <p>Bay Area, San Francisco, CA</p>
+                        <button class="btn btn-primary">Follow</button>
+                        <button class="btn btn-secondary">Message</button>
+                    </div>
+                </div>
+
+                <!-- Body Goals Section -->
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Body Goals</h5>
+                        <p>Based on your current stats, consider aiming for a balanced diet, regular exercise, and consistent tracking of your progress to reach your fitness goals.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Information and Body Info -->
+            <div class="col-md-8">
+                <!-- Basic Info -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Personal Information</h5>
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="username" placeholder="Enter your username">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" placeholder="Enter your email">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Body Info -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Body Information</h5>
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="height" class="form-label">Height (cm)</label>
+                                    <input type="number" class="form-control" id="height" placeholder="Enter your height">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="weight" class="form-label">Weight (kg)</label>
+                                    <input type="number" class="form-control" id="weight" placeholder="Enter your weight">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="bodyFat" class="form-label">Body Fat (%)</label>
+                                    <input type="number" class="form-control" id="bodyFat" placeholder="Enter your body fat percentage">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="waist" class="form-label">Waist (cm)</label>
+                                    <input type="number" class="form-control" id="waist" placeholder="Enter your waist measurement">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Body Stats Graph -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Body Stats Graph</h5>
+                        <canvas id="bodyStatsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
