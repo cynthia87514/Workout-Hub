@@ -1,5 +1,8 @@
 .mt-4 {
     margin-top: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 #calendar {
     box-sizing: border-box;
