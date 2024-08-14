@@ -1,0 +1,7 @@
+#username-title {
+    margin-bottom: 0;
+}
+input[disabled] {
+    cursor: not-allowed;
+    background-color: #e9ecef;
+}

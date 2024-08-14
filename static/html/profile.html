@@ -31,19 +31,15 @@
     </header>
     <div class="container mt-5">
         <div class="row">
-            <!-- Profile Picture Section -->
+            <!-- Profile Section -->
             <div class="col-md-4">
+                <!-- Picture Section -->
                 <div class="card">
                     <div class="card-body text-center">
-                        <img src="/static/images/小芝麻.jpg" class="rounded-circle" alt="User Avatar" width="200" height="200">
-                        <h3 class="mt-3">John Doe</h3>
-                        <p>Full Stack Developer</p>
-                        <p>Bay Area, San Francisco, CA</p>
-                        <button class="btn btn-primary">Follow</button>
-                        <button class="btn btn-secondary">Message</button>
+                        <img src="/static/images/小芝麻.jpg" class="rounded-circle" alt="User Avatar" width="150" height="150">
+                        <h3 class="mt-3" id="username-title"></h3>
                     </div>
                 </div>
-
                 <!-- Body Goals Section -->
                 <div class="card mt-3">
                     <div class="card-body">
@@ -52,33 +48,53 @@
                     </div>
                 </div>
             </div>
-
             <!-- User Information and Body Info -->
             <div class="col-md-8">
                 <!-- Basic Info -->
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Personal Information</h5>
-                        <form>
+                        <!-- Username and Email Form -->
+                        <form id="personal-info-form">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="username" class="form-label">Username</label>
-                                    <input type="text" class="form-control" id="username" placeholder="Enter your username">
+                                    <input type="text" class="form-control" id="username" placeholder="Enter your username" disabled>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" placeholder="Enter your email">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="password" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                                    <input type="email" class="form-control" id="email" placeholder="Enter your email" disabled>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="button" id="edit-personal-btn" class="btn btn-secondary">Edit</button>
+                            <button type="submit" id="save-personal-btn" class="btn btn-primary" style="display: none;">Save Changes</button>
+                            <button type="button" id="cancel-personal-btn" class="btn btn-light" style="display: none;">Cancel</button>
+                        </form>
+                        <hr>
+                        <!-- Password Form -->
+                        <form id="password-form">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="current-password" class="form-label">Current Password</label>
+                                    <input type="password" class="form-control" id="current-password" placeholder="Enter your current password" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="new-password" class="form-label">New Password</label>
+                                    <input type="password" class="form-control" id="new-password" placeholder="Enter your new password" disabled>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="confirm-password" class="form-label">Confirm New Password</label>
+                                    <input type="password" class="form-control" id="confirm-password" placeholder="Confirm your new password" disabled>
+                                </div>
+                            </div>
+                            <button type="button" id="edit-password-btn" class="btn btn-secondary">Edit</button>
+                            <button type="submit" id="save-password-btn" class="btn btn-primary" style="display: none;">Save Changes</button>
+                            <button type="button" id="cancel-password-btn" class="btn btn-light" style="display: none;">Cancel</button>
                         </form>
                     </div>
-                </div>
-
+                </div>                                                                                       
                 <!-- Body Info -->
                 <div class="card mb-3">
                     <div class="card-body">
@@ -106,7 +122,6 @@
                         </form>
                     </div>
                 </div>
-
                 <!-- Body Stats Graph -->
                 <div class="card mb-3">
                     <div class="card-body">
