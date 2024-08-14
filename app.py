@@ -5,6 +5,7 @@ from dbconfig import engine, Base
 from router.exercise import ExerciseRouter
 from router.user import UserRouter
 from router.workout import WorkoutRouter
+from router.profile import ProfileRouter
 
 # 創建所有 table，先執行檢查
 Base.metadata.create_all(bind=engine, checkfirst=True)
@@ -36,3 +37,4 @@ async def index():
 app.include_router(ExerciseRouter)
 app.include_router(UserRouter)
 app.include_router(WorkoutRouter)
+app.include_router(ProfileRouter)
