@@ -126,11 +126,9 @@ async function verifyPassword(inputPassword) {
 }
 // 重置密碼編輯狀態 
 function resetPasswordInputs() {
-    currentPasswordInput.value = "";
     newPasswordInput.value = "";
     confirmPasswordInput.value = "";
 
-    currentPasswordInput.disabled = true;
     newPasswordInput.disabled = true;
     confirmPasswordInput.disabled = true;
 
@@ -180,6 +178,8 @@ editPasswordBtn.addEventListener("click", function() {
 // 取消 Password Info 編輯模式
 cancelPasswordBtn.addEventListener("click", function() {
     resetPasswordInputs();
+    currentPasswordInput.value = "";
+    currentPasswordInput.disabled = true;
     editPasswordBtn.style.display = "inline-block";
     savePasswordBtn.style.display = "none";
     cancelPasswordBtn.style.display = "none";
@@ -214,7 +214,9 @@ currentPasswordInput.addEventListener("input", function() {
 });
 // 驗證新設密碼 
 newPasswordInput.addEventListener("input", function() {
-    if (validatePassword(newPasswordInput.value)) {
+    const newPasswordValid = validatePassword(newPasswordInput.value);
+
+    if (newPasswordValid) {
         newPasswordStatus.textContent = "✔ Valid password";
         newPasswordStatus.style.color = "green";
         confirmPasswordInput.disabled = false;
@@ -223,6 +225,17 @@ newPasswordInput.addEventListener("input", function() {
         newPasswordStatus.style.color = "red";
         confirmPasswordInput.disabled = true;
         savePasswordBtn.disabled = true;
+    }
+
+    // 檢查 Confirm Password 是否與 New Password 匹配
+    if (confirmPasswordInput.value !== "" && confirmPasswordInput.value !== newPasswordInput.value) {
+        confirmPasswordStatus.textContent = "✘ Passwords do not match";
+        confirmPasswordStatus.style.color = "red";
+        savePasswordBtn.disabled = true;
+    } else if (newPasswordValid && confirmPasswordInput.value === newPasswordInput.value) {
+        confirmPasswordStatus.textContent = "✔ Passwords match";
+        confirmPasswordStatus.style.color = "green";
+        savePasswordBtn.disabled = false;
     }
 });
 // 驗證確認密碼 
@@ -254,6 +267,8 @@ document.getElementById("password-form").addEventListener("submit", async functi
     if (response.ok) {
         alert("Password updated successfully.");
         resetPasswordInputs();
+        currentPasswordInput.value = "";
+        currentPasswordInput.disabled = true;
         editPasswordBtn.style.display = "inline-block";
         savePasswordBtn.style.display = "none";
         cancelPasswordBtn.style.display = "none";
