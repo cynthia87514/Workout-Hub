@@ -1,4 +1,5 @@
 // 定義變數及初始化
+let currentUserInfo = null; // 全局變量，保存使用者資料
 const workoutHubButton = document.querySelector(".left");
 const startButton = document.querySelector(".start");
 const recordsButton = document.querySelector(".records");
@@ -23,6 +24,7 @@ async function checkAuth() {
             if (response.ok) {
                 const data = await response.json();
                 if (data.is_token_valid) {
+                    currentUserInfo = data; // 將使用者資料保存到全局變量
                     renderAuthPage();
                 } else {
                     alert("Your session has expired. Please log in again.");
@@ -65,6 +67,8 @@ function renderUnauthPage() {
 function logoutUser() {
     localStorage.removeItem("token");
     sessionStorage.removeItem("recentLogin");
+    // 清除全局變量中的使用者資訊
+    currentUserInfo = null;
     alert("Logout successfully.")
 
     if (window.location.pathname === "/introduction") {
@@ -189,7 +193,14 @@ async function loginUser(event) {
 
 // 主邏輯和事件監聽
 // 檢查使用者登入狀態
-checkAuth();
+document.addEventListener("DOMContentLoaded", async function() {
+    await checkAuth(); // 等待 checkAuth 完成
+
+    // 在 checkAuth 完成後，初始化頁面
+    if (window.location.pathname === "/profile") {
+        initializeProfilePage();
+    }
+});
 
 // 定義 header 上每個按鍵的功能
 workoutHubButton.addEventListener("click", () => {
