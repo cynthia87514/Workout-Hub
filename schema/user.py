@@ -20,6 +20,9 @@ class UserInDB(UserBase):
 
 class UserInResponse(UserBase):
     id: int
+    email: str
+    username: str
+    profile_image_url: Optional[str] = None
     is_token_valid: bool
 
 class UserLogin(BaseModel):

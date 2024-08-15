@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Text
 from sqlalchemy.orm import relationship
 from dbconfig import Base
 from passlib.context import CryptContext
@@ -20,6 +20,7 @@ class User(Base):
     username = Column(String(255), nullable=False)
     email = Column(String(255), unique=True, nullable=False, index=True)
     hashed_password = Column(String(255), nullable=False)
+    profile_image_url = Column(Text, nullable=True, default=None)
     created_at = Column(DateTime, default=get_taipei_time)
     updated_at = Column(DateTime, default=get_taipei_time, onupdate=get_taipei_time)
     
