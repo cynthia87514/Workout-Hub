@@ -36,8 +36,17 @@
                 <!-- Picture Section -->
                 <div class="card">
                     <div class="card-body text-center">
-                        <img src="/static/images/小芝麻.jpg" class="rounded-circle" alt="User Avatar" width="150" height="150">
+                        <!-- Avatar Image -->
+                        <img id="avatar-img" src="/static/images/user.png" class="rounded-circle" alt="User Avatar" width="150" height="150">
                         <h3 class="mt-3" id="username-title"></h3>
+                        <!-- Change Avatar Button -->
+                        <form id="avatar-form" enctype="multipart/form-data">
+                            <input type="file" id="avatar-input" name="avatar" accept="image/*" style="display:none;">
+                            <button type="button" class="btn btn-secondary mt-3" onclick="document.getElementById('avatar-input').click();">Change Avatar</button>
+                            <button type="submit" class="btn btn-primary mt-3">Upload</button>
+                        </form>
+                        <!-- Delete Avatar Button -->
+                        <button id="delete-avatar-btn" class="btn btn-danger mt-3">Delete Avatar</button>
                     </div>
                 </div>
                 <!-- Body Goals Section -->

@@ -1,4 +1,5 @@
 // 定義變數 
+const avatar = document.getElementById("avatar-img")
 const usernameTitle = document.getElementById("username-title");
 const usernameInput = document.getElementById("username");
 const emailInput = document.getElementById("email");
@@ -33,6 +34,9 @@ function initializeProfilePage() {
         usernameTitle.textContent = currentUserInfo.username;
         usernameInput.value = currentUserInfo.username;
         emailInput.value = currentUserInfo.email;
+        if (currentUserInfo.profile_image_url) {
+            avatar.src = currentUserInfo.profile_image_url;
+        }
     } else {
         console.error("User information is not available.");
         window.location.href = "/introduction";
@@ -275,6 +279,67 @@ document.getElementById("password-form").addEventListener("submit", async functi
     } else {
         alert("Failed to update password.");
     }
+});
+// 預覽頭像
+document.getElementById("avatar-input").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            avatar.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+// 上傳頭像
+document.getElementById("avatar-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    
+    const formData = new FormData();
+    const file = document.getElementById("avatar-input").files[0];
+    
+    if (file) {
+        formData.append("image", file);
+
+        fetch("/api/profile/upload-avatar", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token"),
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "ok") {
+                // 更新前端顯示的頭像
+                avatar.src = data.profile_image_url;
+            }
+        })
+        .catch(error => {
+            console.error("Error uploading avatar:", error);
+        });
+    }
+});
+// 刪除頭像
+document.getElementById("delete-avatar-btn").addEventListener("click", function(event) {
+    event.preventDefault();
+    
+    fetch("/api/profile/delete-avatar", {
+        method: "DELETE",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token"),
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "ok") {
+            // 更新前端顯示的頭像
+            avatar.src = "/static/images/user.png";
+        }
+    })
+    .catch(error => {
+        console.error("Error deleting avatar:", error);
+    });
 });
 
 // Sample data for Body Stats Chart (you can replace this with real data)
