@@ -499,6 +499,16 @@ function saveWorkout() {
         console.error("Error:", error.message);
     });
 }
+// 清空 workout section
+function resetWorkoutSection() {
+    const exercises = document.querySelectorAll(".exercise");
+    exercises.forEach(exercise => {
+        exercise.remove();
+    })
+    // 設置默認的主題
+    topic.textContent = defaultTopic;
+    topicInput.value = defaultTopic;
+}
 // 刪除運動項目
 function deleteExercise(button) {
     const exercise = button.closest(".exercise");
@@ -527,12 +537,15 @@ confirmationDialog.addEventListener("click", (event) => {
 saveButton.addEventListener("click", () => {
     confirmationDialog.close();
     toggleSections(true);
+    saveWorkout();
     alert("重訓紀錄已儲存！");
+    resetWorkoutSection();
 });
 discardButton.addEventListener("click", () => {
     confirmationDialog.close();
     toggleSections(true);
     alert("重訓紀錄未儲存！");
+    resetWorkoutSection();
 });
 addButton.addEventListener("click", () => {
     showAddExerciseModal();
@@ -561,7 +574,6 @@ document.querySelectorAll(".exercise-remove-btn").forEach(button => {
         deleteExercise(button);
     });
 });
-document.getElementById("saveButton").addEventListener("click", saveWorkout);
 
 // 處理運動標題相關功能
 const topicContainer = document.querySelector(".topic-container");
