@@ -21,7 +21,7 @@ const finishButton = document.querySelector(".finish");
 const templateAddButton = document.querySelector(".templateAdd");
 const templateSaveButton = document.querySelector(".templateSave");
 const addExerciseModal = document.getElementById("addExerciseModal");
-const modalTitleButtons = document.querySelectorAll(".modal-title");
+const modalTitleButton = document.querySelector(".modal-title");
 const exerciseSearchInput = document.getElementById("exerciseSearch");
 const infoDialog = document.getElementById("infoDialog");
 const dialogExerciseName = document.getElementById("dialogExerciseName");
@@ -258,16 +258,12 @@ function clearSelections() {
     document.querySelectorAll(".dropdown-item, .exercise-item").forEach(item => {
         item.classList.remove("selected");
     });
-    modalTitleButtons.forEach((modalTitleButton) => {
-        modalTitleButton.disabled = true;
-    })
+    modalTitleButton.disabled = true;
     selectedExercise = null;
 }
 // 更新框標題按鈕狀態
 function toggleModalTitleButtonState() {
-    modalTitleButtons.forEach((modalTitleButton) => {
-        modalTitleButton.disabled = selectedExercise === null;
-    })
+    modalTitleButton.disabled = selectedExercise === null;
 }
 // 處理運動項目的選擇
 function handleExerciseSelection(item) {
@@ -445,7 +441,6 @@ function addExercise() {
             </div>
         `;
         addButton.insertAdjacentHTML("beforebegin", exerciseHTML);
-        templateAddButton.insertAdjacentHTML("beforebegin", exerciseHTML);
 
         // 自動關閉模態框
         closeAddExerciseModal();
@@ -647,17 +642,15 @@ discardButton.addEventListener("click", () => {
 addButton.addEventListener("click", () => {
     showAddExerciseModal();
 });
-templateAddButton.addEventListener("click", () => {
-    showAddExerciseModal();
-});
+// templateAddButton.addEventListener("click", () => {
+//     showAddExerciseModal();
+// });
 addExerciseModal.addEventListener("click", (event) => {
     if (event.target === addExerciseModal) {
         closeAddExerciseModal();
     }
 });
-modalTitleButtons.forEach((modalTitleButton) => {
-    modalTitleButton.addEventListener("click", addExercise);
-})
+modalTitleButton.addEventListener("click", addExercise);
 // 添加對輸入框的事件監聽器
 exerciseSearchInput.addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
