@@ -313,10 +313,12 @@ document.getElementById("avatar-form").addEventListener("submit", function(event
             if (data.status === "ok") {
                 // 更新前端顯示的頭像
                 avatar.src = data.profile_image_url;
+                alert("Update avatar successfully");
             }
         })
         .catch(error => {
             console.error("Error uploading avatar:", error);
+            alert("Failed to update avatar");
         });
     }
 });
