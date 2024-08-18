@@ -6,7 +6,7 @@ main {
     margin-top: 20px;
     margin-bottom: 20px;
 }
-.view, .workout {
+.view, .workout, .newTemplate {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -17,7 +17,7 @@ main {
     padding: 20px;
     border-radius: 10px;
 }
-.workout {
+.workout, .newTemplate {
     background-color: #E8F0F8;
     border: #27374D solid 2px;
 }
@@ -60,7 +60,7 @@ main {
     border: #27374D solid 2px;
     border-radius: 10px;
 }
-.templates-up, .templates-down {
+.templates-up {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto;
@@ -69,6 +69,21 @@ main {
     box-sizing: border-box;
     width: 100%;
     max-width: 1200px;
+}
+.templates-down {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    width: 100%;
+    max-width: 1200px;
+}
+hr {
+    width: 95%;
+    height: 1.8px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    background-color: #27374D;
+    border: none;
 }
 .qS-text, .t-text {
     font-size: 30px;
@@ -94,46 +109,83 @@ main {
 .myTemplates, .exampleTemplates {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     box-sizing: border-box;
-    width: 90%;
+    width: 100%;
+    height: 100%;
 }
 .mT-text, .eT-text {
-    margin-top: 10px;
-    font-size: 24px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    font-size: 28px;
     font-family: "Lato", sans-serif;
-    font-weight: 500;
+    font-weight: 600;
 }
 .template-card-box {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
     align-items: center;
     box-sizing: border-box;
-    width: 90%;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
 }
 .template-card {
+    position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    box-sizing: border-box;
-    width: 90%;
-    max-width: 300px;
     background-color: #FFFFFF;
     border-radius: 10px;
-    padding: 10px;
-    margin: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: auto;
+    height: 200px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 }
-.topic-container {
+.template-image {
+    position: absolute;
+    top: 70%; /* 图片顶端对齐到卡片50%的位置 */
+    left: 50%; /* 图片左侧对齐到卡片50%的位置 */
+    transform: translate(-50%, -70%); /* 通过平移使图片水平垂直居中 */
+    width: 100px; /* 设置图片宽度 */
+    height: 100px; /* 设置图片高度 */
+}
+.template-title {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #27374D;
+}
+.template-content {
+    list-style-type: none;
+    padding-left: 10px;
+    margin: 0;
+    font-size: 1em;
+}
+.template-content li {
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+}
+.template-content li:before {
+    content: "•";
+    color: #b12b24;
+    font-weight: bold;
+    display: inline-block; 
+    width: 20px;
+    margin-left: -20px;
+}
+.topic-container, .template-topic-container {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-top: 20px;
     font-family: Arial, sans-serif;
 }
-.topic-input {
+.topic-input, .templateTopic-input {
     font-size: 1.2rem;
     padding: 5px 10px;
     border: 2px solid #96B6C5;
@@ -144,26 +196,26 @@ main {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: border-color 0.3s, box-shadow 0.3s;
 }
-.topic-input:focus {
+.topic-input:focus, .templateTopic-input:focus {
     border-color: #526D82;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
-.topic-input.show {
+.topic-input.show, .templateTopic-input.show {
     display: inline-block;
 }
-.topic {
+.topic, .templateTopic {
     font-size: 1.5rem;
     color: #007bff;
     font-family: "Poppins", sans-serif;
     font-weight: bold;
     margin-right: 10px;
 }
-.edit-icon, .camera-icon {
+.edit-icon, .camera-icon, .template-edit-icon, .template-camera-icon {
     width: 22px;
     height: 22px;
     cursor: pointer;
 }
-.add-button, .finish {
+.add-button, .finish, .templateAdd, .templateSave {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -570,15 +622,18 @@ dialog {
     cursor: pointer;
 }
 /* hover 效果 */
-.qS-button, .add-template, .edit-icon, .camera-icon, .add-button, .finish, .dialog-buttons button,.close-button, .modal-title, .exercise-item, .check-btn, .delete-btn, .add-set, .exercise-remove-btn, .filter-button, .dropdown-item, .info-button {
+.qS-button, .add-template, .edit-icon, .camera-icon, .template-edit-icon, .template-camera-icon, .add-button, .finish, .templateAdd, .templateSave, .dialog-buttons button,.close-button, .modal-title, .exercise-item, .check-btn, .delete-btn, .add-set, .exercise-remove-btn, .filter-button, .dropdown-item, .info-button, .template-card {
     transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-.qS-button:hover, .add-template:hover, .edit-icon:hover, .camera-icon:hover,.add-button:hover, .finish:hover, .dialog-buttons button:hover,.close-button:hover, .modal-title:hover, .exercise-item:hover, .check-btn:hover, .delete-btn:hover, .add-set:hover, .exercise-remove-btn:hover, .filter-button:hover, .dropdown-item:hover, .info-button:hover {
+.qS-button:hover, .add-template:hover, .edit-icon:hover, .camera-icon:hover, .template-edit-icon:hover, .template-camera-icon:hover,.add-button:hover, .finish:hover, .templateAdd:hover, .templateSave:hover, .dialog-buttons button:hover,.close-button:hover, .modal-title:hover, .exercise-item:hover, .check-btn:hover, .delete-btn:hover, .add-set:hover, .exercise-remove-btn:hover, .filter-button:hover, .dropdown-item:hover, .info-button:hover, .template-card:hover {
     transform: translateY(-2px);
     opacity: 0.9;
 }
-.qS-button:hover, .add-template:hover,.add-button:hover, .finish:hover, .dialog-buttons button:hover, .modal-title:hover {
+.qS-button:hover, .add-template:hover,.add-button:hover, .finish:hover, .templateAdd:hover, .templateSave:hover, .dialog-buttons button:hover, .modal-title:hover {
     background-color: #526D82;
+}
+.template-card:hover {
+    background-color: #F0F0F0;
 }
 .exercise-item:hover, .dropdown-item:hover {
     background-color: #F0F0F0;

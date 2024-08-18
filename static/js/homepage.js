@@ -10,15 +10,18 @@ const filterCriteria = {
 };
 
 const quickStartButton = document.querySelector(".qS-button");
-const finishButton = document.querySelector(".finish");
 const confirmationDialog = document.getElementById("confirmationDialog");
 const saveButton = document.getElementById("saveButton");
 const discardButton = document.getElementById("discardButton");
 const workoutSection = document.querySelector(".workout");
+const newTemplateSection = document.querySelector(".newTemplate");
 const viewSection = document.querySelector(".view");
 const addButton = document.querySelector(".add-button");
+const finishButton = document.querySelector(".finish");
+const templateAddButton = document.querySelector(".templateAdd");
+const templateSaveButton = document.querySelector(".templateSave");
 const addExerciseModal = document.getElementById("addExerciseModal");
-const modalTitleButton = document.querySelector(".modal-title");
+const modalTitleButtons = document.querySelectorAll(".modal-title");
 const exerciseSearchInput = document.getElementById("exerciseSearch");
 const infoDialog = document.getElementById("infoDialog");
 const dialogExerciseName = document.getElementById("dialogExerciseName");
@@ -255,12 +258,16 @@ function clearSelections() {
     document.querySelectorAll(".dropdown-item, .exercise-item").forEach(item => {
         item.classList.remove("selected");
     });
-    modalTitleButton.disabled = true;
+    modalTitleButtons.forEach((modalTitleButton) => {
+        modalTitleButton.disabled = true;
+    })
     selectedExercise = null;
 }
 // 更新框標題按鈕狀態
 function toggleModalTitleButtonState() {
-    modalTitleButton.disabled = selectedExercise === null;
+    modalTitleButtons.forEach((modalTitleButton) => {
+        modalTitleButton.disabled = selectedExercise === null;
+    })
 }
 // 處理運動項目的選擇
 function handleExerciseSelection(item) {
@@ -282,13 +289,23 @@ function handleExerciseSelection(item) {
     }
     toggleModalTitleButtonState();
 }
-// 切換顯示區域
+// 切換顯示區域 workoutSection 和 viewSection
 function toggleSections(hideWorkout) {
     if (hideWorkout) {
         workoutSection.classList.add("hide");
         viewSection.classList.remove("hide");
     } else {
         workoutSection.classList.remove("hide");
+        viewSection.classList.add("hide");
+    }
+}
+// 切換顯示區域 newTemplateSection 和 viewSection
+function toggleSectionsTemplate(hideNewTemplate) {
+    if (hideNewTemplate) {
+        newTemplateSection.classList.add("hide");
+        viewSection.classList.remove("hide");
+    } else {
+        newTemplateSection.classList.remove("hide");
         viewSection.classList.add("hide");
     }
 }
@@ -419,7 +436,7 @@ function addExercise() {
                         <div class="cell">2</div>
                         <div class="cell">—</div>
                         <div class="cell"><input type="number" placeholder="kg" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
-                        <div class="cell"><input type="number" value="15" class="repsInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
+                        <div class="cell"><input type="number" value="10" class="repsInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
                         <div class="cell"><img src="/static/images/check.png" class="check-btn" alt="check"></div>
                         <div class="cell"><img src="/static/images/delete.png" class="delete-btn" alt="delete"></div>
                     </div>
@@ -427,7 +444,8 @@ function addExercise() {
                 </div>
             </div>
         `;
-        document.querySelector(".add-button").insertAdjacentHTML("beforebegin", exerciseHTML);
+        addButton.insertAdjacentHTML("beforebegin", exerciseHTML);
+        templateAddButton.insertAdjacentHTML("beforebegin", exerciseHTML);
 
         // 自動關閉模態框
         closeAddExerciseModal();
@@ -518,6 +536,81 @@ function deleteExercise(button) {
 function addSetRowHandler(event) {
     addSetRow(event.currentTarget);
 }
+// 初始化 Templates 的 workout section
+function initializeTemplateWorkout() {
+    const exerciseHTML = `
+        <div class="exercise">
+            <h3>${selectedExerciseName}</h3>
+            <img src="/static/images/remove.png" class="exercise-remove-btn" alt="remove">
+            <div class="exercise-table">
+                <div class="table-row-header">
+                    <div class="cell">Set</div>
+                    <div class="cell">Previous</div>
+                    <div class="cell">kg</div>
+                    <div class="cell">Reps</div>
+                    <div class="cell">check</div>
+                    <div class="cell">Delete</div>
+                </div>
+                <div class="table-row">
+                    <div class="cell">1</div>
+                    <div class="cell">—</div>
+                    <div class="cell"><input type="number" placeholder="kg" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
+                    <div class="cell"><input type="number" value="10" class="repsInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
+                    <div class="cell"><img src="/static/images/check.png" class="check-btn" alt="check"></div>
+                    <div class="cell"><img src="/static/images/delete.png" class="delete-btn" alt="delete"></div>
+                </div>
+                <div class="table-row">
+                    <div class="cell">2</div>
+                    <div class="cell">—</div>
+                    <div class="cell"><input type="number" placeholder="kg" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
+                    <div class="cell"><input type="number" value="10" class="repsInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
+                    <div class="cell"><img src="/static/images/check.png" class="check-btn" alt="check"></div>
+                    <div class="cell"><img src="/static/images/delete.png" class="delete-btn" alt="delete"></div>
+                </div>
+                <div class="table-row">
+                    <div class="cell">3</div>
+                    <div class="cell">—</div>
+                    <div class="cell"><input type="number" placeholder="kg" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
+                    <div class="cell"><input type="number" value="10" class="repsInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
+                    <div class="cell"><img src="/static/images/check.png" class="check-btn" alt="check"></div>
+                    <div class="cell"><img src="/static/images/delete.png" class="delete-btn" alt="delete"></div>
+                </div>
+                <button class="add-set">Add Set</button>
+            </div>
+        </div>
+    `;
+    addButton.insertAdjacentHTML("beforebegin", exerciseHTML);
+
+    // 自動關閉模態框
+    closeAddExerciseModal();
+
+    // 更新按鈕狀態
+    setTimeout(updateCheckButtons, 0); // 使用 setTimeout 確保 DOM 已更新
+
+    // 為刪除 exercise 按鈕添加事件監聽
+    document.querySelectorAll(".exercise-remove-btn").forEach(button => {
+        button.addEventListener("click", function() {
+            deleteExercise(button);
+        });
+    });
+}
+// 點擊 New Templates
+function clickNewTemplate() {
+    toggleSectionsTemplate();
+}
+// 點擊 Example Templates
+function clickExampleTemplate(templateName) {
+    toggleSections();
+    const templateCard = document.querySelector(`.template-card[onclick="clickExampleTemplate('${templateName}')"]`);
+    const exercises = templateCard.querySelectorAll(".template-content li");
+    
+    exercises.forEach((exercise) => {
+        // 取得每一個運動項目的名稱
+        selectedExerciseName = exercise.textContent;
+        
+        initializeTemplateWorkout();
+    });
+}
 
 // 主邏輯和事件監聽
 document.querySelectorAll(".add-set").forEach(button => {
@@ -529,6 +622,10 @@ quickStartButton.addEventListener("click", () => {
 finishButton.addEventListener("click", () => {
     confirmationDialog.showModal();
 });
+// 使用者流程待確認
+// templateSaveButton.addEventListener("click", () => {
+//     confirmationDialog.showModal();
+// });
 confirmationDialog.addEventListener("click", (event) => {
     if (event.target === confirmationDialog) {
         confirmationDialog.close();
@@ -550,12 +647,17 @@ discardButton.addEventListener("click", () => {
 addButton.addEventListener("click", () => {
     showAddExerciseModal();
 });
+templateAddButton.addEventListener("click", () => {
+    showAddExerciseModal();
+});
 addExerciseModal.addEventListener("click", (event) => {
     if (event.target === addExerciseModal) {
         closeAddExerciseModal();
     }
 });
-modalTitleButton.addEventListener("click", addExercise);
+modalTitleButtons.forEach((modalTitleButton) => {
+    modalTitleButton.addEventListener("click", addExercise);
+})
 // 添加對輸入框的事件監聽器
 exerciseSearchInput.addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
@@ -577,10 +679,15 @@ document.querySelectorAll(".exercise-remove-btn").forEach(button => {
 
 // 處理運動標題相關功能
 const topicContainer = document.querySelector(".topic-container");
+const templateTopicContainer = document.querySelector(".template-topic-container");
 const topic = topicContainer.querySelector(".topic");
 const topicInput = topicContainer.querySelector(".topic-input");
 const editIcon = topicContainer.querySelector(".edit-icon");
 const cameraIcon = topicContainer.querySelector(".camera-icon");
+const templateTopic = templateTopicContainer.querySelector(".templateTopic");
+const templateTopicInput = templateTopicContainer.querySelector(".templateTopic-input");
+const templateEditIcon = templateTopicContainer.querySelector(".template-edit-icon");
+const templateCameraIcon = templateTopicContainer.querySelector(".template-camera-icon");
 // 獲取今天的日期並格式化
 const today = new Date();
 const formattedDate = `${today.getMonth() + 1}/${today.getDate()}`;
@@ -588,6 +695,8 @@ const defaultTopic = `${formattedDate} Workout`;
 // 設置默認的主題
 topic.textContent = defaultTopic;
 topicInput.value = defaultTopic;
+templateTopic.textContent = "My Template";
+templateTopicInput.value = "My Template";
 // 事件監聽
 editIcon.addEventListener("click", () => {
     topic.classList.add("hide");
@@ -595,14 +704,31 @@ editIcon.addEventListener("click", () => {
     topicInput.classList.add("show");
     topicInput.focus();
 });
+templateEditIcon.addEventListener("click", () => {
+    templateTopic.classList.add("hide");
+    templateTopicInput.classList.remove("hide");
+    templateTopicInput.classList.add("show");
+    templateTopicInput.focus();
+});
 topicInput.addEventListener("blur", () => {
     topic.textContent = topicInput.value;
     topic.classList.remove("hide");
     topicInput.classList.add("hide");
     topicInput.classList.remove("show");
 });
+templateTopicInput.addEventListener("blur", () => {
+    templateTopic.textContent = templateTopicInput.value;
+    templateTopic.classList.remove("hide");
+    templateTopicInput.classList.add("hide");
+    templateTopicInput.classList.remove("show");
+});
 topicInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
         topicInput.blur();
+    }
+});
+templateTopicInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+        templateTopicInput.blur();
     }
 });

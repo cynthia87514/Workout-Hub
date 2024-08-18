@@ -36,20 +36,57 @@
             <div class="templates">
                 <div class="templates-up">
                     <div class="t-text">Templates</div>
-                    <button class="add-template">New Templates</button>
+                    <button class="add-template" onclick="clickNewTemplate()">New Templates</button>
                 </div>
+                <hr>
                 <div class="templates-down">
                     <div class="myTemplates">
                         <div class="mT-text">My Templates</div>
                         <div class="template-card-box">
-                            <div class="template-card">Tap "New Templates" to Add New Template</div>
+                            <div class="template-card">
+                                <div class="template-title">Tap "New Templates" to Add New Template</div>
+                                <img src="/static/images/template.png" alt="Add New Template" class="template-image">
+                            </div>
                         </div>
                     </div>
                     <div class="exampleTemplates">
                         <div class="eT-text">Example Templates</div>
                         <div class="template-card-box">
-                            <div class="template-card">Legs<br>Squat (Barbell), Leg Extension (Machine), Flat Leg Raise and Standing Calf Raise...</div>
-                            <div class="template-card">Chest and Triceps<br>Bench Press (Barbell), Incline Bench Press (Barbell), Strict Military Press (Barb...</div>
+                            <div class="template-card" onclick="clickExampleTemplate('Chest and Triceps')">
+                                <div class="template-title">Chest and Triceps</div>
+                                <ul class="template-content">
+                                    <li>Barbell Bench Press - Medium Grip</li>
+                                    <li>Barbell Incline Bench Press - Medium Grip</li>
+                                    <li>Machine Shoulder (Military) Press</li>
+                                    <li>Dumbbell Raise</li>
+                                </ul>
+                            </div>
+                            <div class="template-card" onclick="clickExampleTemplate('Back and Biceps')">
+                                <div class="template-title">Back and Biceps</div>
+                                <ul class="template-content">
+                                    <li>Barbell Deadlift</li>
+                                    <li>Elevated Cable Rows</li>
+                                    <li>Wide-Grip Lat Pulldown</li>
+                                    <li>Barbell Curl</li>
+                                </ul>
+                            </div>
+                            <div class="template-card" onclick="clickExampleTemplate('Legs')">
+                                <div class="template-title">Legs</div>
+                                <ul class="template-content">
+                                    <li>Barbell Full Squat</li>
+                                    <li>Leg Extensions</li>
+                                    <li>Flat Bench Lying Leg Raise</li>
+                                    <li>Thigh Abductor</li>
+                                </ul>
+                            </div>
+                            <div class="template-card" onclick="clickExampleTemplate('Strong 5x5 - Workout A')">
+                                <div class="template-title">Strong 5x5 - Workout A</div>
+                                <ul class="template-content">
+                                    <li>Barbell Full Squat</li>
+                                    <li>Barbell Bench Press - Medium Grip</li>
+                                    <li>Bent Over Barbell Row</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -64,6 +101,16 @@
             </div>
             <button class="add-button">Add Exercises</button>
             <button class="finish">Finish Workout</button>
+        </section>
+        <section class="newTemplate hide">
+            <div class="template-topic-container">
+                <input type="text" class="templateTopic-input hide" value="">
+                <div class="templateTopic"></div>
+                <img src="/static/images/pencil.png" class="template-edit-icon" alt="edit">
+                <img src="/static/images/camera.png" class="template-camera-icon" alt="camera">
+            </div>
+            <button class="templateAdd">Add Exercises</button>
+            <button class="templateSave">Save Template</button>
         </section>
     </main>
     <footer>
