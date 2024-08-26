@@ -39,8 +39,8 @@ async function checkAuth() {
             logoutUser();
         }
     } else {
-        if (window.location.pathname !== "/introduction") {
-            window.location.href = "/introduction";
+        if (window.location.pathname !== "/") {
+            window.location.href = "/";
         } else {
             renderUnauthPage();
         }
@@ -69,12 +69,11 @@ function logoutUser() {
     sessionStorage.removeItem("recentLogin");
     // 清除全局變量中的使用者資訊
     currentUserInfo = null;
-    alert("Logout successfully.")
 
-    if (window.location.pathname === "/introduction") {
+    if (window.location.pathname === "/") {
         window.location.reload();
     } else {
-        window.location.href = "/introduction";
+        window.location.href = "/";
     }
 }
 // Dialog 相關功能
@@ -181,10 +180,9 @@ async function loginUser(event) {
         } else {
             const result = await response.json();
             localStorage.setItem("token", result.access_token);
-            alert("Login successfully");
             closeModal();
             checkAuth();
-            window.location.href = "/";
+            window.location.href = "/start";
         }
     } catch (error) {
         alert("An error occurred: " + error.message);
@@ -204,11 +202,11 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 // 定義 header 上每個按鍵的功能
 workoutHubButton.addEventListener("click", () => {
-    window.location.href = "/introduction";
+    window.location.href = "/";
 });
 
 startButton.addEventListener("click", () => {
-    window.location.href = "/";
+    window.location.href = "/start";
 });
 
 recordsButton.addEventListener("click", () => {
