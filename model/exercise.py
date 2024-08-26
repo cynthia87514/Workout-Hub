@@ -1,11 +1,12 @@
-from sqlalchemy import Column, Integer, String, JSON
-from sqlalchemy.orm import Session
+from sqlalchemy import Column, Integer, String, JSON, PrimaryKeyConstraint, UniqueConstraint
+from sqlalchemy.orm import relationship, Session
 from dbconfig import Base
 
 class Exercise(Base):
     __tablename__ = "exercises"
-    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
-    name = Column(String(255), nullable=False, unique=True, index=True)
+    
+    id = Column(Integer, autoincrement=True)
+    name = Column(String(255), nullable=False)
     force = Column(String(255))
     level = Column(String(255), nullable=False)
     mechanic = Column(String(255))
@@ -15,7 +16,14 @@ class Exercise(Base):
     instructions = Column(JSON, nullable=False)
     category = Column(String(255), nullable=False)
     images = Column(JSON, nullable=False)
+    
+    workouts_items = relationship("WorkoutsItem", back_populates="exercise")
 
+    __table_args__ = (
+        PrimaryKeyConstraint("id", "name"),
+        UniqueConstraint("name", name="uix_exercise_name"),
+    )
+    
     @staticmethod
     def get_all_exercises(db: Session):
         results = db.query(
