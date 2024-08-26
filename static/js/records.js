@@ -9,6 +9,7 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
     showNonCurrentDates: true,
     aspectRatio: 1.5,
     dayMaxEvents: true, // FullCalendar 默認 "+n more" 功能
+    eventOrder: "created_at,-title",
     eventClick: function(info) {
         const workoutId = info.event.id;
         fetchWorkoutDetail(workoutId);
@@ -44,11 +45,20 @@ function loadWorkoutData(year, month) {
 
         if (Array.isArray(data)) {
             data.forEach(workout => {
+                const dateObj = new Date(workout.created_at);
+                    
+                // 提取年份、月份、日期
+                const year = dateObj.getFullYear();
+                const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const day = String(dateObj.getDate()).padStart(2, '0');
+                
+                const startDate = `${year}-${month}-${day}`;
                 calendar.addEvent({
                     id: workout.id,
                     title: workout.title,
-                    start: workout.date,
+                    start: startDate,
                     allDay: true,
+                    created_at: workout.created_at,
                     classNames: ["custom-event"]
                 });
             });
@@ -80,15 +90,26 @@ function fetchWorkoutDetail(workoutId) {
 }
 // 顯示 workout 詳細資訊框
 function showWorkoutDetailModal(workout) {
+    const dateObj = new Date(workout.created_at);
+    const formattedDate = dateObj.toLocaleString("zh-TW", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false  // 使用 24 小时制
+    }).replace(/\//g, "/").replace(/, /g, " "); // 轉換日期格式，並移除默認的逗號
+
     const modalContent = `
         <div class="modal-content">
             <img src="/static/images/remove.png" class="remove-btn" alt="remove">
             <h2>${workout.title}</h2>
-            <p>Date: ${workout.date}</p>
+            <p>${formattedDate}</p>
             <ul>
                 ${workout.workout_items.map(item => `
                     <li>
-                        <strong>${item.name}</strong>
+                        <strong>${item.exercise_name}</strong>
                         <ul>
                             ${item.item_sets.map(set => `
                                 <li>Set ${set.set_number}: ${set.weight ? set.weight + "kg" : ""} ${set.reps ? set.reps + " reps" : ""}</li>
