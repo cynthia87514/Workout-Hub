@@ -14,13 +14,13 @@ app = FastAPI(debug=True)
 
 app.mount("/static", StaticFiles(directory="static", html=True))
 
-@app.get("/introduction")
-async def index():
-    return FileResponse("./static/html/introduction.html", media_type="text/html")
-
 @app.get("/")
 async def index():
     return FileResponse("./static/html/homepage.html", media_type="text/html")
+
+@app.get("/start")
+async def index():
+    return FileResponse("./static/html/start.html", media_type="text/html")
 
 @app.get("/records")
 async def index():
