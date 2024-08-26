@@ -1,22 +1,24 @@
-// 定義變數 
-const avatar = document.getElementById("avatar-img")
+// 1. 變數定義
+// --------------------------------------------------
+// 通用變數
 const usernameTitle = document.getElementById("username-title");
 const usernameInput = document.getElementById("username");
 const emailInput = document.getElementById("email");
-const emailErrorText = document.createElement("small");  // 用於顯示 Email 錯誤信息 
-emailErrorText.style.color = "red";
-emailInput.parentNode.appendChild(emailErrorText);
-
 const currentPasswordInput = document.getElementById("current-password");
 const newPasswordInput = document.getElementById("new-password");
 const confirmPasswordInput = document.getElementById("confirm-password");
-const passwordStatus = document.createElement("small");  // 用於顯示當前密碼驗證狀態 
-const newPasswordStatus = document.createElement("small");  // 用於顯示新密碼驗證狀態 
-const confirmPasswordStatus = document.createElement("small");  // 用於顯示確認密碼驗證狀態 
-currentPasswordInput.parentNode.appendChild(passwordStatus);
-newPasswordInput.parentNode.appendChild(newPasswordStatus);
-confirmPasswordInput.parentNode.appendChild(confirmPasswordStatus);
+let bmr, tdee, tef, neat, eee;
 
+// 頭像編輯相關變數
+const editAvatarBtn = document.getElementById("edit-avatar-btn");
+const deleteAvatarBtn = document.getElementById("delete-avatar-btn");
+const avatarForm = document.getElementById("avatar-form");
+const avatarInput = document.getElementById("avatar-input");
+const confirmAvatarBtn = document.getElementById("confirm-avatar-btn");
+const cancelAvatarBtn = document.getElementById("cancel-avatar-btn");
+const avatar = document.getElementById("avatar-img");
+
+// 帳戶資訊編輯相關按鈕
 const editPersonalBtn = document.getElementById("edit-personal-btn");
 const savePersonalBtn = document.getElementById("save-personal-btn");
 const cancelPersonalBtn = document.getElementById("cancel-personal-btn");
@@ -24,11 +26,57 @@ const editPasswordBtn = document.getElementById("edit-password-btn");
 const savePasswordBtn = document.getElementById("save-password-btn");
 const cancelPasswordBtn = document.getElementById("cancel-password-btn");
 
-let cachedPassword = null;  // 緩存已經驗證的密碼 
-let debounceTimeout = null; // 防抖的 timeout 
+// 身體資訊編輯相關按鈕
+const messageContainerMale = document.getElementById("male-form-message");
+const editBodyBtnMale = document.getElementById("edit-body-btn-male");
+const saveBodyBtnMale = document.getElementById("save-body-btn-male");
+const cancelBodyBtnMale = document.getElementById("cancel-body-btn-male");
+const maleInputs = [
+    document.getElementById("male-height"),
+    document.getElementById("male-weight"),
+    document.getElementById("male-age"),
+    document.getElementById("male-neck"),
+    document.getElementById("male-waist"),
+    document.getElementById("male-activity-level")
+];
 
-// 定義函數 
-// 初始化 Profile 頁面 
+const messageContainerFemale = document.getElementById("female-form-message");
+const editBodyBtnFemale = document.getElementById("edit-body-btn-female");
+const saveBodyBtnFemale = document.getElementById("save-body-btn-female");
+const cancelBodyBtnFemale = document.getElementById("cancel-body-btn-female");
+const femaleInputs = [
+    document.getElementById("female-height"),
+    document.getElementById("female-weight"),
+    document.getElementById("female-age"),
+    document.getElementById("female-neck"),
+    document.getElementById("female-waist"),
+    document.getElementById("female-hip"),
+    document.getElementById("female-activity-level")
+];
+
+// 電子郵件錯誤提示
+const emailErrorText = document.createElement("small");
+emailErrorText.style.color = "red";
+emailInput.parentNode.appendChild(emailErrorText);
+
+// 密碼狀態提示
+const passwordStatus = document.createElement("small");
+const newPasswordStatus = document.createElement("small");
+const confirmPasswordStatus = document.createElement("small");
+currentPasswordInput.parentNode.appendChild(passwordStatus);
+newPasswordInput.parentNode.appendChild(newPasswordStatus);
+confirmPasswordInput.parentNode.appendChild(confirmPasswordStatus);
+
+// 緩存變數
+let cachedPassword = null;
+let debounceTimeout = null;
+let originalMaleValues = maleInputs.map(input => input.value);
+let originalFemaleValues = femaleInputs.map(input => input.value);
+
+// 2. 功能函數定義
+// --------------------------------------------------
+
+// 初始化 Profile 頁面
 function initializeProfilePage() {
     if (currentUserInfo) {
         usernameTitle.textContent = currentUserInfo.username;
@@ -39,29 +87,33 @@ function initializeProfilePage() {
         }
     } else {
         console.error("User information is not available.");
-        window.location.href = "/introduction";
+        window.location.href = "/";
     }
 }
-// 開啟編輯模式
+
+// 開啟/取消編輯模式
 function enableEditMode(inputs, editBtn, saveBtn, cancelBtn) {
     inputs.forEach(input => input.disabled = false);
     editBtn.style.display = "none";
     saveBtn.style.display = "inline-block";
     cancelBtn.style.display = "inline-block";
 }
-// 取消編輯模式 
+
 function cancelEditMode(inputs, originalValues, editBtn, saveBtn, cancelBtn) {
     inputs.forEach((input, index) => {
         input.value = originalValues[index];
         input.disabled = true;
+        input.classList.remove("is-invalid", "is-valid");
     });
     editBtn.style.display = "inline-block";
     saveBtn.style.display = "none";
     cancelBtn.style.display = "none";
+    messageContainerMale.style.display = "none";
+    messageContainerFemale.style.display = "none";
 }
-// 驗證電子郵件並更新使用者資訊 
+
+// 驗證並更新使用者信息
 async function validateAndUpdatePersonalInfo(username, email, token) {
-    // 檢查 Email 是否重複
     const emailCheckResponse = await fetch("/api/profile/check-email", {
         method: "POST",
         headers: {
@@ -79,7 +131,6 @@ async function validateAndUpdatePersonalInfo(username, email, token) {
         return false;
     }
 
-    // 如果 Email 未重複，保存使用者資訊 
     const response = await fetch("/api/profile/update-user-info", {
         method: "POST",
         headers: {
@@ -97,14 +148,14 @@ async function validateAndUpdatePersonalInfo(username, email, token) {
         currentUserInfo.email = email;
         usernameTitle.textContent = currentUserInfo.username;
 
-        alert("Personal information updated successfully.");
         return true;
     } else {
-        alert("Failed to update personal information.");
+        alert("Failed to update personal information, please try again.");
         return false;
     }
 }
-// 驗證密碼 
+
+// 密碼相關功能
 async function verifyPassword(inputPassword) {
     if (inputPassword === cachedPassword) {
         return { isPasswordCorrect: true };
@@ -128,7 +179,7 @@ async function verifyPassword(inputPassword) {
 
     return data;
 }
-// 重置密碼編輯狀態 
+
 function resetPasswordInputs() {
     newPasswordInput.value = "";
     confirmPasswordInput.value = "";
@@ -141,16 +192,268 @@ function resetPasswordInputs() {
     confirmPasswordStatus.textContent = "";
 }
 
-// 主邏輯和事件監聽 
-// 開啟 Personal Info 編輯模式
+// 頭像上傳和刪除
+function setUploadingState(isUploading) {
+    const uploadSpinner = document.getElementById("upload-spinner");
+    const uploadText = document.getElementById("upload-text");
+
+    if (isUploading) {
+        uploadSpinner.style.display = "inline-block";
+        uploadText.textContent = "Saving...";
+        confirmAvatarBtn.classList.add("disabled");
+        confirmAvatarBtn.disabled = true;
+    } else {
+        uploadSpinner.style.display = "none";
+        uploadText.textContent = "Save Changes";
+        confirmAvatarBtn.classList.remove("disabled");
+        confirmAvatarBtn.disabled = false;
+    }
+}
+
+async function uploadAvatar(formData) {
+    const response = await fetch("/api/profile/upload-avatar", {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token"),
+        },
+        body: formData
+    });
+
+    return await response.json();
+}
+
+function updateAvatarImage(imageUrl) {
+    avatar.src = imageUrl;
+}
+
+function deleteAvatarImage(event) {
+    event.preventDefault();
+    
+    fetch("/api/profile/delete-avatar", {
+        method: "DELETE",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token"),
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "ok") {
+            // 更新前端顯示的頭像
+            avatar.src = "/static/images/user.png";
+            confirmAvatarBtn.style.display = "none";
+            avatarForm.style.display = "none";
+            editAvatarBtn.style.display = "block";
+        }
+    })
+    .catch(error => {
+        console.error("Error deleting avatar:", error);
+    });
+}
+// 個人身體資訊表單顯示
+function showMaleForm() {
+    document.getElementById("male-form").style.display = "block";
+    document.getElementById("female-form").style.display = "none";
+    document.getElementById("male-btn").classList.add("active");
+    document.getElementById("female-btn").classList.remove("active");
+    cancelEditMode(femaleInputs, originalFemaleValues, editBodyBtnFemale, saveBodyBtnFemale, cancelBodyBtnFemale);
+}
+
+function showFemaleForm() {
+    document.getElementById("male-form").style.display = "none";
+    document.getElementById("female-form").style.display = "block";
+    document.getElementById("male-btn").classList.remove("active");
+    document.getElementById("female-btn").classList.add("active");
+    cancelEditMode(maleInputs, originalMaleValues, editBodyBtnMale, saveBodyBtnMale, cancelBodyBtnMale);
+}
+
+async function fetchBodyHistory() {
+    try {
+        const response = await fetch("/api/profile/bodyhistory", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (response.ok) {
+            const bodyHistory = await response.json();
+
+            if (bodyHistory && bodyHistory.length > 0) {
+                updateBodyStatsChart(bodyHistory);;
+            } else {
+                updateBodyStatsChart([]);
+            }
+        } else {
+            console.error("Failed to fetch body history:", response.statusText);
+            updateBodyStatsChart([]);
+        }
+    } catch (error) {
+        console.error("Error fetching body history:", error);
+        updateBodyStatsChart([]);
+    }
+}
+
+// 收集表單數據
+function collectBodyInfo(gender) {
+    let data = {};
+
+    if (gender === "Male") {
+        data = {
+            gender: "Male",
+            height: parseFloat(document.getElementById("male-height").value),
+            weight: parseFloat(document.getElementById("male-weight").value),
+            age: parseInt(document.getElementById("male-age").value),
+            neck_circumference: parseFloat(document.getElementById("male-neck").value),
+            waist_circumference: parseFloat(document.getElementById("male-waist").value),
+            activity_level: extractActivityLevel(document.getElementById("male-activity-level").value)
+        };
+    } else if (gender === "Female") {
+        data = {
+            gender: "Female",
+            height: parseFloat(document.getElementById("female-height").value),
+            weight: parseFloat(document.getElementById("female-weight").value),
+            age: parseInt(document.getElementById("female-age").value),
+            neck_circumference: parseFloat(document.getElementById("female-neck").value),
+            waist_circumference: parseFloat(document.getElementById("female-waist").value),
+            hip_circumference: parseFloat(document.getElementById("female-hip").value),
+            activity_level: extractActivityLevel(document.getElementById("female-activity-level").value)
+        };
+    }
+    return data;
+}
+
+function extractActivityLevel(value) {
+    return value.split(":")[0].trim();
+}
+
+// 檢查必填欄位是否有值
+function checkRequiredFields(form) {
+    const requiredFields = form.querySelectorAll(".required");
+    let valid = true;
+
+    requiredFields.forEach(field => {
+        if (!field.value) {
+            valid = false;
+            field.classList.add("is-invalid");
+        } else {
+            field.classList.remove("is-invalid");
+        }
+    });
+
+    return valid;
+}
+
+// 顯示提示消息
+function showSaveMessage(messageContainer, message, success = true) {
+    messageContainer.textContent = message;
+    messageContainer.className = success ? "text-success" : "text-danger";
+    messageContainer.style.display = "block";
+}
+
+// 將表單數據發送到後端
+async function sendBodyInfo(data, messageContainer) {
+    const response = await fetch("/api/profile/upload-bodyinfo", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (response.ok) {
+        showSaveMessage(messageContainer, "Body information updated successfully!", true);
+    } else {
+        showSaveMessage(messageContainer, "Failed to update body information.", false);
+    }
+}
+
+// 3. 事件監聽器添加
+// --------------------------------------------------
+// 頁面初始化
+fetchBodyInformation();
+renderTDEEPercentage();
+fetchBodyHistory();
+
+// 頭像編輯相關事件
+editAvatarBtn.addEventListener("click", function() {
+    editAvatarBtn.style.display = "none";
+    avatarForm.style.display = "block";
+});
+
+avatarInput.addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            avatar.src = e.target.result;
+            confirmAvatarBtn.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+deleteAvatarBtn.addEventListener("click", deleteAvatarImage);
+
+cancelAvatarBtn.addEventListener("click", function() {
+    if (currentUserInfo.profile_image_url) {
+        avatar.src = currentUserInfo.profile_image_url;
+    } else {
+        avatar.src = "/static/images/user.png";
+    }
+    avatarInput.value = "";
+    avatarForm.style.display = "none";
+    confirmAvatarBtn.style.display = "none";
+    editAvatarBtn.style.display = "block";
+});
+
+// 頭像上傳處理
+avatarForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const file = avatarInput.files[0];
+    
+    if (file) {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        setUploadingState(true);
+
+        uploadAvatar(formData)
+            .then(data => {
+                if (data.status === "ok") {
+                    updateAvatarImage(data.profile_image_url);
+                }
+            })
+            .catch(error => {
+                console.error("Failed to upload avatar：", error);
+                alert("Failed to upload avatar, please try again.");
+            })
+            .finally(() => {
+                setUploadingState(false);
+                confirmAvatarBtn.style.display = "none";
+                avatarForm.style.display = "none";
+                editAvatarBtn.style.display = "block";
+            });
+    }
+});
+
+// 開啟/取消個人信息編輯模式
 editPersonalBtn.addEventListener("click", function() {
     enableEditMode([usernameInput, emailInput], editPersonalBtn, savePersonalBtn, cancelPersonalBtn);
 });
-// 取消 Personal Info 編輯模式
+
 cancelPersonalBtn.addEventListener("click", function() {
     cancelEditMode([usernameInput, emailInput], [currentUserInfo.username, currentUserInfo.email], editPersonalBtn, savePersonalBtn, cancelPersonalBtn);
+    usernameTitle.textContent = currentUserInfo.username;
+    usernameInput.value = currentUserInfo.username;
+    emailInput.value = currentUserInfo.email;
+    emailErrorText.textContent = "";
+    emailInput.style.backgroundColor = "#e9ecef";
 });
-// 保存使用者資訊 
+
+// 保存個人信息
 document.getElementById("personal-info-form").addEventListener("submit", async function(event) {
     event.preventDefault();
 
@@ -173,13 +476,14 @@ document.getElementById("personal-info-form").addEventListener("submit", async f
         cancelPersonalBtn.style.display = "none";
     }
 });
-// 開啟 Password Info 編輯模式
+
+// 密碼相關事件監聽
 editPasswordBtn.addEventListener("click", function() {
     enableEditMode([currentPasswordInput], editPasswordBtn, savePasswordBtn, cancelPasswordBtn);
-    resetPasswordInputs();  // 清除狀態資訊 
+    resetPasswordInputs();  // 清除狀態信息 
     savePasswordBtn.disabled = true;  // 禁用 Save 按鈕 
 });
-// 取消 Password Info 編輯模式
+
 cancelPasswordBtn.addEventListener("click", function() {
     resetPasswordInputs();
     currentPasswordInput.value = "";
@@ -188,7 +492,8 @@ cancelPasswordBtn.addEventListener("click", function() {
     savePasswordBtn.style.display = "none";
     cancelPasswordBtn.style.display = "none";
 });
-// 驗證目前密碼 
+
+// 驗證當前密碼
 currentPasswordInput.addEventListener("input", function() {
     clearTimeout(debounceTimeout);
 
@@ -216,7 +521,8 @@ currentPasswordInput.addEventListener("input", function() {
         }
     }, 1000);
 });
-// 驗證新設密碼 
+
+// 驗證新設密碼
 newPasswordInput.addEventListener("input", function() {
     const newPasswordValid = validatePassword(newPasswordInput.value);
 
@@ -242,7 +548,8 @@ newPasswordInput.addEventListener("input", function() {
         savePasswordBtn.disabled = false;
     }
 });
-// 驗證確認密碼 
+
+// 驗證確認密碼
 confirmPasswordInput.addEventListener("input", function() {
     if (confirmPasswordInput.value === newPasswordInput.value) {
         confirmPasswordStatus.textContent = "✔ Passwords match";
@@ -254,7 +561,8 @@ confirmPasswordInput.addEventListener("input", function() {
         savePasswordBtn.disabled = true;
     }
 });
-// 保存密碼修改 
+
+// 保存密碼修改
 document.getElementById("password-form").addEventListener("submit", async function(event) {
     event.preventDefault();
 
@@ -277,99 +585,54 @@ document.getElementById("password-form").addEventListener("submit", async functi
         savePasswordBtn.style.display = "none";
         cancelPasswordBtn.style.display = "none";
     } else {
-        alert("Failed to update password.");
+        alert("Failed to update password, plaese try again.");
     }
-});
-// 預覽頭像
-document.getElementById("avatar-input").addEventListener("change", function(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            avatar.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-});
-// 上傳頭像
-document.getElementById("avatar-form").addEventListener("submit", function(event) {
-    event.preventDefault();
-    
-    const formData = new FormData();
-    const file = document.getElementById("avatar-input").files[0];
-    
-    if (file) {
-        formData.append("image", file);
-
-        fetch("/api/profile/upload-avatar", {
-            method: "POST",
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem("token"),
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "ok") {
-                // 更新前端顯示的頭像
-                avatar.src = data.profile_image_url;
-                alert("Update avatar successfully");
-            }
-        })
-        .catch(error => {
-            console.error("Error uploading avatar:", error);
-            alert("Failed to update avatar");
-        });
-    }
-});
-// 刪除頭像
-document.getElementById("delete-avatar-btn").addEventListener("click", function(event) {
-    event.preventDefault();
-    
-    fetch("/api/profile/delete-avatar", {
-        method: "DELETE",
-        headers: {
-            "Authorization": "Bearer " + localStorage.getItem("token"),
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === "ok") {
-            // 更新前端顯示的頭像
-            avatar.src = "/static/images/user.png";
-        }
-    })
-    .catch(error => {
-        console.error("Error deleting avatar:", error);
-    });
 });
 
-// Sample data for Body Stats Chart (you can replace this with real data)
-// const ctx = document.getElementById("bodyStatsChart").getContext("2d");
-// const bodyStatsChart = new Chart(ctx, {
-//     type: "line",
-//     data: {
-//         labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-//         datasets: [{
-//             label: "Weight (kg)",
-//             data: [70, 69, 68, 67, 66, 65],
-//             borderColor: "rgba(75, 192, 192, 1)",
-//             backgroundColor: "rgba(75, 192, 192, 0.2)",
-//             fill: true,
-//         },
-//         {
-//             label: "Body Fat (%)",
-//             data: [20, 19, 18, 17, 16, 15],
-//             borderColor: "rgba(153, 102, 255, 1)",
-//             backgroundColor: "rgba(153, 102, 255, 0.2)",
-//             fill: true,
-//         }]
-//     },
-//     options: {
-//         scales: {
-//             y: {
-//                 beginAtZero: true
-//             }
-//         }
-//     }
-// });
+// 男性身體資訊編輯事件
+editBodyBtnMale.addEventListener("click", () => {
+    enableEditMode(maleInputs, editBodyBtnMale, saveBodyBtnMale, cancelBodyBtnMale);
+});
+
+cancelBodyBtnMale.addEventListener("click", () => {
+    cancelEditMode(maleInputs, originalMaleValues, editBodyBtnMale, saveBodyBtnMale, cancelBodyBtnMale);
+});
+
+// 保存男性表單數據
+document.getElementById("male-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (checkRequiredFields(document.getElementById("male-form"))) {
+        const data = collectBodyInfo("Male");
+        sendBodyInfo(data, messageContainerMale);
+        editBodyBtnMale.style.display = "inline-block";
+        saveBodyBtnMale.style.display = "none";
+        cancelBodyBtnMale.style.display = "none";
+        messageContainerMale.style.display = "none";
+    } else {
+        showSaveMessage(messageContainerMale, "Please fill in all required fields.", false);
+    }
+});
+
+// 女性身體資訊編輯事件
+editBodyBtnFemale.addEventListener("click", () => {
+    enableEditMode(femaleInputs, editBodyBtnFemale, saveBodyBtnFemale, cancelBodyBtnFemale);
+});
+
+cancelBodyBtnFemale.addEventListener("click", () => {
+    cancelEditMode(femaleInputs, originalFemaleValues, editBodyBtnFemale, saveBodyBtnFemale, cancelBodyBtnFemale);
+});
+
+// 保存女性表單數據
+document.getElementById("female-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (checkRequiredFields(document.getElementById("female-form"))) {
+        const data = collectBodyInfo("Female");
+        sendBodyInfo(data, messageContainerFemale);
+        editBodyBtnFemale.style.display = "inline-block";
+        saveBodyBtnFemale.style.display = "none";
+        cancelBodyBtnFemale.style.display = "none";
+        messageContainerFemale.style.display = "none";
+    } else {
+        showSaveMessage(messageContainerFemale, "Please fill in all required fields.", false);
+    }
+});

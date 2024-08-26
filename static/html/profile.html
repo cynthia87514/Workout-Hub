@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="/static/css/header.css"/>
     <link rel="stylesheet" type="text/css" href="/static/css/profile.css"/>
     <script src="/static/js/header.js" defer></script>
+    <script src="/static/js/chart.js" defer></script>
     <script src="/static/js/profile.js" defer></script>
 </head>
 <body>
@@ -36,105 +37,249 @@
                 <!-- Picture Section -->
                 <div class="card">
                     <div class="card-body text-center">
+                        <h5 class="card-title">Avatar</h5>
                         <!-- Avatar Image -->
                         <img id="avatar-img" src="/static/images/user.png" class="rounded-circle" alt="User Avatar" width="150" height="150">
                         <h3 class="mt-3" id="username-title"></h3>
-                        <!-- Change Avatar Button -->
-                        <form id="avatar-form" enctype="multipart/form-data">
+                        <!-- Edit Avatar Button -->
+                        <button type="button" id="edit-avatar-btn" class="btn btn-secondary w-100">Edit</button>
+                        
+                        <!-- Avatar Form -->
+                        <form id="avatar-form" enctype="multipart/form-data" style="display: none;">
                             <input type="file" id="avatar-input" name="avatar" accept="image/*" style="display:none;">
-                            <button type="button" class="btn btn-secondary mt-3" onclick="document.getElementById('avatar-input').click();">Change Avatar</button>
-                            <button type="submit" class="btn btn-primary mt-3">Upload</button>
+                            <button type="button" class="btn btn-secondary mt-3 w-100" id="choose-photo-btn" style="background-color: #96B6C5; color: white; border: #96B6C5; height: 37.6px;" onclick="document.getElementById('avatar-input').click();">Choose New Photo</button>
+                            <button type="button" id="delete-avatar-btn" class="btn btn-danger mt-3 w-100" style="background-color: #b12b24; color: white; border: #b12b24; height: 37.6px;">Delete Current Avatar</button>
+                            <button type="submit" class="btn btn-primary mt-3 w-100" id="confirm-avatar-btn" style="background-color: #27374D; color: white; border: #27374D; height: 37.6px; display: none;">
+                                <span id="upload-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                                <span id="upload-text">Save Changes</span>
+                            </button>
+                            <button type="button" id="cancel-avatar-btn" class="btn btn-light mt-3 w-100">Cancel</button>
                         </form>
-                        <!-- Delete Avatar Button -->
-                        <button id="delete-avatar-btn" class="btn btn-danger mt-3">Delete Avatar</button>
                     </div>
                 </div>
-                <!-- Body Goals Section -->
-                <div class="card mt-3">
+                <!-- Account Information -->
+                <div class="card mb-3 mt-3">
                     <div class="card-body">
-                        <h5 class="card-title">Body Goals</h5>
-                        <p>Based on your current stats, consider aiming for a balanced diet, regular exercise, and consistent tracking of your progress to reach your fitness goals.</p>
-                    </div>
-                </div>
-            </div>
-            <!-- User Information and Body Info -->
-            <div class="col-md-8">
-                <!-- Basic Info -->
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Personal Information</h5>
+                        <h5 class="card-title">Account Information</h5>
                         <!-- Username and Email Form -->
                         <form id="personal-info-form">
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="mb-3">
                                     <label for="username" class="form-label">Username</label>
                                     <input type="text" class="form-control" id="username" placeholder="Enter your username" disabled>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
                                     <input type="email" class="form-control" id="email" placeholder="Enter your email" disabled>
                                 </div>
                             </div>
-                            <button type="button" id="edit-personal-btn" class="btn btn-secondary">Edit</button>
-                            <button type="submit" id="save-personal-btn" class="btn btn-primary" style="display: none;">Save Changes</button>
-                            <button type="button" id="cancel-personal-btn" class="btn btn-light" style="display: none;">Cancel</button>
+                            <button type="button" id="edit-personal-btn" class="btn btn-secondary w-100 mb-3">Edit</button>
+                            <button type="submit" id="save-personal-btn" class="btn w-100" style="background-color: #27374D; color: white; display: none;">Save Changes</button>
+                            <button type="button" id="cancel-personal-btn" class="btn btn-light w-100 mt-2" style="display: none;">Cancel</button>
                         </form>
                         <hr>
                         <!-- Password Form -->
                         <form id="password-form">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="current-password" class="form-label">Current Password</label>
-                                    <input type="password" class="form-control" id="current-password" placeholder="Enter your current password" disabled>
-                                </div>
+                            <div class="mb-3">
+                                <label for="current-password" class="form-label">Current Password</label>
+                                <input type="password" class="form-control" id="current-password" placeholder="Enter your current password" disabled>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="new-password" class="form-label">New Password</label>
-                                    <input type="password" class="form-control" id="new-password" placeholder="Enter your new password" disabled>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="confirm-password" class="form-label">Confirm New Password</label>
-                                    <input type="password" class="form-control" id="confirm-password" placeholder="Confirm your new password" disabled>
-                                </div>
+                            <div class="mb-3">
+                                <label for="new-password" class="form-label">New Password</label>
+                                <input type="password" class="form-control" id="new-password" placeholder="Enter your new password" disabled>
                             </div>
-                            <button type="button" id="edit-password-btn" class="btn btn-secondary">Edit</button>
-                            <button type="submit" id="save-password-btn" class="btn btn-primary" style="display: none;">Save Changes</button>
-                            <button type="button" id="cancel-password-btn" class="btn btn-light" style="display: none;">Cancel</button>
-                        </form>
-                    </div>
-                </div>                                                                                       
-                <!-- Body Info -->
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Body Information</h5>
-                        <form>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="height" class="form-label">Height (cm)</label>
-                                    <input type="number" class="form-control" id="height" placeholder="Enter your height">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="weight" class="form-label">Weight (kg)</label>
-                                    <input type="number" class="form-control" id="weight" placeholder="Enter your weight">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="bodyFat" class="form-label">Body Fat (%)</label>
-                                    <input type="number" class="form-control" id="bodyFat" placeholder="Enter your body fat percentage">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="waist" class="form-label">Waist (cm)</label>
-                                    <input type="number" class="form-control" id="waist" placeholder="Enter your waist measurement">
-                                </div>
+                            <div class="mb-3">
+                                <label for="confirm-password" class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirm-password" placeholder="Confirm your new password" disabled>
                             </div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="button" id="edit-password-btn" class="btn btn-secondary w-100 mb-3">Edit</button>
+                            <button type="submit" id="save-password-btn" class="btn w-100" style="background-color: #27374D; color: white; display: none;">Save Changes</button>
+                            <button type="button" id="cancel-password-btn" class="btn btn-light w-100 mt-2" style="display: none;">Cancel</button>
                         </form>
                     </div>
                 </div>
+            </div>
+
+            <div class="col-md-8">
+                <!-- Body Information -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Body Information</h5>
+                        <!-- Gender toggle -->
+                        <div class="gender-toggle">
+                            <button type="button" id="male-btn" class="btn-toggle active" onclick="showMaleForm()">Male</button>
+                            <button type="button" id="female-btn" class="btn-toggle" onclick="showFemaleForm()">Female</button>
+                            <div class="slider"></div>
+                        </div>
+                        <!-- Form for males -->
+                        <form id="male-form">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="male-height" class="form-label">Height (cm) <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control required" id="male-height" placeholder="Enter your height" disabled>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="male-weight" class="form-label">Weight (kg) <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control required" id="male-weight" placeholder="Enter your weight" disabled>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="male-age" class="form-label">Age <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control required" id="male-age" placeholder="Enter your age" disabled>
+                                </div>
+                                <div class="col-md-6 mb-3"></div> <!-- Empty column to align age input -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="male-neck" class="form-label">Neck Circumference (cm)</label>
+                                    <input type="number" class="form-control" id="male-neck" placeholder="Enter your neck circumference" disabled>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="male-waist" class="form-label">Waist Circumference (cm)</label>
+                                    <input type="number" class="form-control" id="male-waist" placeholder="Enter your waist circumference" disabled>
+                                </div>
+                            </div>
+                            <!-- Daily Activity Level Dropdown -->
+                            <div class="mb-3">
+                                <label for="male-activity-level" class="form-label">Daily Activity Level <span class="text-danger">*</span></label>
+                                <select class="form-select required" id="male-activity-level" aria-label="Select daily activity level" disabled>
+                                    <option value="" disabled selected hidden>Choose your activity level</option>
+                                    <option value="sedentary">Sedentary: Little or no exercise</option>
+                                    <option value="lightly_active">Lightly active: Exercise one to three days a week</option>
+                                    <option value="moderately_active">Moderately active: Exercise three to five days a week</option>
+                                    <option value="active">Active: Exercise six to seven days a week</option>
+                                    <option value="very_active">Very active: Hard exercise six to seven days a week</option>
+                                </select>
+                            </div>
+                            <div id="male-form-message" class="mb-3" style="display: none;"></div>
+                            <button type="button" id="edit-body-btn-male" class="btn btn-secondary w-100 mb-3">Edit</button>
+                            <button type="submit" id="save-body-btn-male" class="btn w-100" style="background-color: #27374D; color: white; display: none;">Save Changes</button>
+                            <button type="button" id="cancel-body-btn-male" class="btn btn-light w-100 mt-2" style="display: none;">Cancel</button>
+                        </form>
+                        <!-- Form for females -->
+                        <form id="female-form" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="female-height" class="form-label">Height (cm) <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control required" id="female-height" placeholder="Enter your height" disabled>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="female-weight" class="form-label">Weight (kg) <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control required" id="female-weight" placeholder="Enter your weight" disabled>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="female-age" class="form-label">Age <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control required" id="female-age" placeholder="Enter your age" disabled>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="female-neck" class="form-label">Neck Circumference (cm)</label>
+                                    <input type="number" class="form-control" id="female-neck" placeholder="Enter your neck circumference" disabled>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="female-waist" class="form-label">Waist Circumference (cm)</label>
+                                    <input type="number" class="form-control" id="female-waist" placeholder="Enter your waist circumference" disabled>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="female-hip" class="form-label">Hip Circumference (cm)</label>
+                                    <input type="number" class="form-control" id="female-hip" placeholder="Enter your hip circumference" disabled>
+                                </div>
+                            </div>
+                            <!-- Daily Activity Level Dropdown -->
+                            <div class="mb-3">
+                                <label for="female-activity-level" class="form-label">Daily Activity Level <span class="text-danger">*</span></label>
+                                <select class="form-select required" id="female-activity-level" aria-label="Select daily activity level" disabled>
+                                    <option value="" disabled selected hidden>Choose your activity level</option>
+                                    <option value="sedentary">Sedentary: Little or no exercise</option>
+                                    <option value="lightly_active">Lightly active: Exercise one to three days a week</option>
+                                    <option value="moderately_active">Moderately active: Exercise three to five days a week</option>
+                                    <option value="active">Active: Exercise six to seven days a week</option>
+                                    <option value="very_active">Very active: Hard exercise six to seven days a week</option>
+                                </select>
+                            </div>
+                            <div id="female-form-message" class="mb-3" style="display: none;"></div>
+                            <button type="button" id="edit-body-btn-female" class="btn btn-secondary w-100 mb-3">Edit</button>
+                            <button type="submit" id="save-body-btn-female" class="btn w-100" style="background-color: #27374D; color: white; display: none;">Save Changes</button>
+                            <button type="button" id="cancel-body-btn-female" class="btn btn-light w-100 mt-2" style="display: none;">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- Body Goals Section -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Body Status</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Your BMI：
+                            <span class="bmi-title">Please enter your body information to get BMI</span>
+                        </h6>
+                        <div class="bmi-bar">
+                            <div class="bmi-section underweight">Underweight</div>
+                            <div class="bmi-section normal">Normal</div>
+                            <div class="bmi-section overweight">Overweight</div>
+                            <div class="bmi-section slight-obesity">Slight Obesity</div>
+                            <div class="bmi-section middle-obesity">Middle Obesity</div>
+                            <div class="bmi-section extreme-obesity">Extreme Obesity</div>
+                            <div class="bmi-indicator" style="left: 0%;">▼</div>
+                        </div>
+                        <div class="bmi-scale">
+                            <span style="left: 0%;">15</span>
+                            <span style="left: 14.0%;">18.5</span>
+                            <span style="left: 36.0%;">24</span>
+                            <span style="left: 48.0%;">27</span>
+                            <span style="left: 60.0%;">30</span>
+                            <span style="left: 80.0%;">35</span>
+                            <span style="left: 100%;">40</span>
+                        </div>    
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Your PBF：
+                            <span class="pbf-title">Please enter your body information to get PBF</span>
+                        </h6>
+                        <div class="pbf-bar-male">
+                            <div class="pbf-section essential-fat">Essential Fat</div>
+                            <div class="pbf-section athletes">Athletes</div>
+                            <div class="pbf-section fitness">Fitness</div>
+                            <div class="pbf-section acceptable">Acceptable</div>
+                            <div class="pbf-section obesity">Obesity</div>
+                            <div class="pbf-indicator" style="left: 0%;">▼</div>
+                        </div>
+                        <div class="pbf-scale-male">
+                            <span style="left: 0%;">2</span>
+                            <span style="left: 16.0%;">6</span>
+                            <span style="left: 48.0%;">14</span>
+                            <span style="left: 64.0%;">18</span>
+                            <span style="left: 92.0%;">25</span>
+                            <span style="left: 100.0%;">27</span>
+                        </div>
+                        <div class="pbf-bar-female" style="display: none;">
+                            <div class="pbf-section essential-fat">Essential Fat</div>
+                            <div class="pbf-section athletes">Athletes</div>
+                            <div class="pbf-section fitness">Fitness</div>
+                            <div class="pbf-section acceptable">Acceptable</div>
+                            <div class="pbf-section obesity">Obesity</div>
+                            <div class="pbf-indicator" style="left: 0%;">▼</div>
+                        </div>
+                        <div class="pbf-scale-female" style="display: none;">
+                            <span style="left: 0%;">10</span>
+                            <span style="left: 16.0%;">14</span>
+                            <span style="left: 44.0%;">21</span>
+                            <span style="left: 60.0%;">25</span>
+                            <span style="left: 88.0%;">32</span>
+                            <span style="left: 100.0%;">35</span>
+                        </div>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Your BMR：
+                            <span class="bmr-title">Please enter your body information to get BMR</span>
+                        </h6>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Your TDEE：
+                            <span class="tdee-title">Please enter your body information to get TDEE</span>
+                        </h6>
+                        <div class="tdeechart">
+                            <canvas id="tdeeChart"></canvas>
+                            <canvas id="tdeeAdjustmentChart"></canvas>
+                        </div>                                        
+                    </div>
+                </div>                                                                                                                                                           
                 <!-- Body Stats Graph -->
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Body Stats Graph</h5>
+                        <h5 class="card-title">Body History</h5>
                         <canvas id="bodyStatsChart"></canvas>
                     </div>
                 </div>

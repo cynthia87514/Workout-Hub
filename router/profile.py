@@ -3,9 +3,13 @@ from sqlalchemy.orm import Session
 
 from dbconfig import get_db
 from model.user import User
+from model.profile import BodyInformation, BodyHistory
 from service.auth import create_access_token, get_current_user
-from schema.profile import EmailCheckRequest, PasswordVerifyRequest, UpdateUserInfoRequest, UpdateUserPasswordRequest
+from schema.profile import EmailCheckRequest, PasswordVerifyRequest, UpdateUserInfoRequest, UpdateUserPasswordRequest, BodyInformationRequest, BodyInformationResponse, BodyHistoryResponse
 from schema.user import UserInDB
+from datetime import datetime
+from pytz import timezone
+from typing import List
 
 import os
 from dotenv import load_dotenv
@@ -17,6 +21,12 @@ ProfileRouter = APIRouter(
     prefix="/api/profile",
     tags=["Profile"]
 )
+
+# 定義台北時區
+taipei_tz = timezone("Asia/Taipei")
+
+def get_taipei_time():
+    return datetime.now(taipei_tz)
 
 load_dotenv()
 
@@ -121,3 +131,92 @@ async def delete_avatar(current_user: UserInDB = Depends(get_current_user), db: 
     
     except (NoCredentialsError, PartialCredentialsError) as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to delete image")
+    
+# 儲存 Body Information 到 DB
+@ProfileRouter.post("/upload-bodyinfo")
+async def upload_body_info(body_info: BodyInformationRequest, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    body_information = db.query(BodyInformation).filter_by(user_id=current_user.id).first()
+    
+    if not body_information:
+        body_information = BodyInformation(
+            user_id=current_user.id,
+            gender=body_info.gender,
+            height=body_info.height,
+            weight=body_info.weight,
+            age=body_info.age,
+            neck_circumference=body_info.neck_circumference,
+            waist_circumference=body_info.waist_circumference,
+            hip_circumference=body_info.hip_circumference,
+            activity_level=body_info.activity_level,
+            bmi=body_info.bmi,
+            pbf=body_info.pbf,
+            bmr=body_info.bmr,
+            tdee=body_info.tdee
+        )
+        db.add(body_information)
+    else:
+        body_information.height = body_info.height
+        body_information.weight = body_info.weight
+        body_information.age = body_info.age
+        body_information.neck_circumference = body_info.neck_circumference
+        body_information.waist_circumference = body_info.waist_circumference
+        body_information.hip_circumference = body_info.hip_circumference
+        body_information.activity_level = body_info.activity_level
+        body_information.bmi = body_info.bmi
+        body_information.pbf = body_info.pbf
+        body_information.bmr = body_info.bmr
+        body_information.tdee = body_info.tdee
+    
+    body_information.bmi = body_information.calculate_bmi()
+    body_information.pbf = body_information.calculate_pbf()
+    body_information.bmr = body_information.calculate_bmr()
+    body_information.tdee = body_information.calculate_tdee()
+
+    db.commit()
+    
+    body_history = BodyHistory(
+        user_id=current_user.id,
+        weight=body_information.weight,
+        pbf=body_information.pbf,
+        recorded_at=datetime.now(taipei_tz)
+    )
+    db.add(body_history)
+    db.commit()
+    
+    return {"status": "success", "message": "Body information uploaded successfully"}
+
+# 提取 Body Information
+@ProfileRouter.get("/bodyinfo", response_model=BodyInformationResponse)
+async def get_body_info(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    body_information = db.query(BodyInformation).filter_by(user_id=current_user.id).first()
+
+    if not body_information:
+        return BodyInformationResponse()
+
+    return BodyInformationResponse(
+        gender=body_information.gender,
+        height=body_information.height,
+        weight=body_information.weight,
+        age=body_information.age,
+        neck_circumference=body_information.neck_circumference,
+        waist_circumference=body_information.waist_circumference,
+        hip_circumference=body_information.hip_circumference,
+        activity_level=body_information.activity_level,
+        bmi=body_information.bmi,
+        pbf=body_information.pbf,
+        bmr=body_information.bmr,
+        tdee=body_information.tdee
+    )
+
+# 提取 Body History
+@ProfileRouter.get("/bodyhistory", response_model=List[BodyHistoryResponse])
+async def get_body_history(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    body_history_records = db.query(BodyHistory).filter_by(user_id=current_user.id).order_by(BodyHistory.recorded_at.asc()).all()
+
+    body_history_response = [BodyHistoryResponse(
+        weight=record.weight,
+        pbf=record.pbf,
+        recorded_at=record.recorded_at
+    ) for record in body_history_records]
+
+    return body_history_response
