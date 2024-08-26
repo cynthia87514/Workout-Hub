@@ -123,3 +123,9 @@ a {
 .custom-event:hover {
     background-color: #526D82;
 }
+
+@media (min-width: 1285px) {
+    #calendar {
+        max-width: 1140px;
+    }
+}
