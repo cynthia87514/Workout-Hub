@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from datetime import date
+from datetime import datetime
 from typing import List, Optional
 
 class ItemSetCreate(BaseModel):
@@ -8,12 +8,13 @@ class ItemSetCreate(BaseModel):
     reps: Optional[int]
 
 class WorkoutsItemCreate(BaseModel):
-    name: str
+    exercise_name: str
     item_sets: List[ItemSetCreate]
 
 class WorkoutCreate(BaseModel):
     title: str
     workout_items: List[WorkoutsItemCreate]
+    is_template: Optional[bool] = False
 
 class ItemSetResponse(BaseModel):
     id: int
@@ -26,8 +27,8 @@ class ItemSetResponse(BaseModel):
 
 class WorkoutsItemResponse(BaseModel):
     id: int
-    name: str
-    item_sets: List[ItemSetResponse]
+    exercise_name: str
+    item_sets: List[ItemSetResponse] = []
 
     class Config:
         orm_mode = True
@@ -35,7 +36,8 @@ class WorkoutsItemResponse(BaseModel):
 class WorkoutResponse(BaseModel):
     id: int
     title: str
-    date: date
+    created_at: datetime
+    is_template: bool
 
     class Config:
         orm_mode = True
@@ -43,8 +45,24 @@ class WorkoutResponse(BaseModel):
 class WorkoutDetail(BaseModel):
     id: int
     title: str
-    date: date
-    workout_items: List[WorkoutsItemResponse]
+    created_at: datetime
+    is_template: bool
+    workout_items: List[WorkoutsItemResponse] = []
 
     class Config:
         orm_mode = True
+        
+class ItemSetUpdate(BaseModel):
+    id: Optional[int]
+    set_number: int
+    weight: Optional[float]
+    reps: Optional[int]
+
+class WorkoutsItemUpdate(BaseModel):
+    id: Optional[int]
+    exercise_name: str
+    item_sets: List[ItemSetUpdate]
+
+class WorkoutUpdate(BaseModel):
+    title: Optional[str]
+    workout_items: List[WorkoutsItemUpdate]

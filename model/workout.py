@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Date
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Date, Boolean, ForeignKeyConstraint
 from sqlalchemy.orm import relationship
 from dbconfig import Base
 
@@ -19,9 +19,9 @@ class Workouts(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     title = Column(String(255), nullable=False)
-    date = Column(Date, default=get_taipei_date, nullable=False, index=True)
     created_at = Column(DateTime, default=get_taipei_time)
     updated_at = Column(DateTime, default=get_taipei_time, onupdate=get_taipei_time)
+    is_template = Column(Boolean, default=False, nullable=False)
 
     user = relationship("User", back_populates="workouts")
     workouts_items = relationship("WorkoutsItem", back_populates="workout", cascade="all, delete-orphan")
@@ -31,12 +31,21 @@ class WorkoutsItem(Base):
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     workout_id = Column(Integer, ForeignKey("workouts.id", ondelete="CASCADE"))
-    name = Column(String(255), nullable=False)
+    exercise_name = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=get_taipei_time)
     updated_at = Column(DateTime, default=get_taipei_time, onupdate=get_taipei_time)
 
     workout = relationship("Workouts", back_populates="workouts_items")
     item_sets = relationship("ItemSet", back_populates="workouts_item", cascade="all, delete-orphan")
+    exercise = relationship("Exercise", back_populates="workouts_items")
+    
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ['exercise_name'],
+            ['exercises.name'],
+            ondelete="CASCADE"
+        ),
+    )
 
 class ItemSet(Base):
     __tablename__ = "item_set"

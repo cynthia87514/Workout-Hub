@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from dbconfig import get_db
 from model.workout import Workouts, WorkoutsItem, ItemSet
 from model.user import User
-from schema.workout import WorkoutCreate, WorkoutDetail, WorkoutResponse
+from schema.workout import WorkoutCreate, WorkoutDetail, WorkoutResponse, WorkoutUpdate
 from service.auth import get_current_user
 from datetime import datetime
 from pytz import timezone
@@ -18,9 +18,6 @@ WorkoutRouter = APIRouter(
 # 定義台北時區
 taipei_tz = timezone("Asia/Taipei")
 
-def get_taipei_date():
-    return datetime.now(taipei_tz).date()
-
 def last_day_of_month(year, month):
     return calendar.monthrange(year, month)[1]
 
@@ -30,7 +27,7 @@ def create_workout(workout: WorkoutCreate, db: Session = Depends(get_db), curren
     new_workout = Workouts(
         user_id=current_user.id,
         title=workout.title,
-        date=get_taipei_date(),  # 使用當天的日期
+        is_template=workout.is_template
     )
     db.add(new_workout)
     db.commit()
@@ -39,7 +36,7 @@ def create_workout(workout: WorkoutCreate, db: Session = Depends(get_db), curren
     for item in workout.workout_items:
         workout_item = WorkoutsItem(
             workout_id=new_workout.id,
-            name=item.name,
+            exercise_name=item.exercise_name,
         )
         db.add(workout_item)
         db.commit()
@@ -68,6 +65,52 @@ def delete_workout(workout_id: int, db: Session = Depends(get_db), current_user:
     db.commit()
     return {"message": "Workout deleted successfully"}
 
+# 取得 template workout 資料
+@WorkoutRouter.get("/workout/templates", response_model=List[WorkoutDetail])
+def get_template_workouts(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    templates = db.query(Workouts).filter(
+        Workouts.user_id == current_user.id,
+        Workouts.is_template == True
+    ).order_by(Workouts.created_at.asc()).all()
+
+    templates_detail = []
+
+    for workout in templates:
+        workout_dict = {
+            "id": workout.id,
+            "title": workout.title,
+            "created_at": workout.created_at,
+            "is_template": workout.is_template,
+            "workout_items": [
+                {
+                    "id": item.id,
+                    "exercise_name": item.exercise_name,
+                    "item_sets": [
+                        {
+                            "id": set.id,
+                            "set_number": set.set_number,
+                            "weight": set.weight,
+                            "reps": set.reps
+                        } for set in item.item_sets
+                    ]
+                } for item in workout.workouts_items
+            ]
+        }
+        templates_detail.append(workout_dict)
+
+    return templates_detail
+
+# 刪除 template workout 資料
+@WorkoutRouter.delete("/workout/templates/{template_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_template_workout(template_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    workout = db.query(Workouts).filter(Workouts.id == template_id, Workouts.user_id == current_user.id).first()
+    if workout is None:
+        raise HTTPException(status_code=404, detail="Template not found")
+    
+    db.delete(workout)
+    db.commit()
+    return {"message": "Template deleted successfully"}
+
 # 取得指定月份的 workout 資料
 @WorkoutRouter.get("/workouts/month/{month}", response_model=List[WorkoutResponse])
 def get_workouts_by_month(month: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -76,12 +119,17 @@ def get_workouts_by_month(month: str, db: Session = Depends(get_db), current_use
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid month format. Expected 'YYYY-MM'.")
     
+    start_date = datetime(year, month, 1)
     last_day = last_day_of_month(year, month)
+    end_date = datetime(year, month, last_day, 23, 59, 59)
+    
     workouts = db.query(Workouts).filter(
         Workouts.user_id == current_user.id,
-        Workouts.date >= f"{year}-{month:02d}-01",
-        Workouts.date <= f"{year}-{month:02d}-{last_day}"
-    ).all()
+        Workouts.is_template == False,
+        Workouts.created_at >= start_date,
+        Workouts.created_at <= end_date
+    ).order_by(Workouts.created_at.asc()).all()
+    
     return workouts
 
 # 取得特定 workout 資料
@@ -95,11 +143,12 @@ def get_workout_detail(workout_id: int, db: Session = Depends(get_db), current_u
     workout_dict = {
         "id": workout.id,
         "title": workout.title,
-        "date": workout.date,
+        "created_at": workout.created_at,
+        "is_template": workout.is_template,
         "workout_items": [
             {
                 "id": item.id,
-                "name": item.name,
+                "exercise_name": item.exercise_name,
                 "item_sets": [
                     {
                         "id": set.id,
@@ -109,6 +158,83 @@ def get_workout_detail(workout_id: int, db: Session = Depends(get_db), current_u
                     } for set in item.item_sets
                 ]
             } for item in workout.workouts_items
+        ]
+    }
+
+    return workout_dict
+
+# 更新 tempalte 功能
+@WorkoutRouter.put("/workout/templates/{template_id}", response_model=WorkoutDetail)
+def update_template_workout(template_id: int, workout_update: WorkoutUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    workout = db.query(Workouts).filter(Workouts.id == template_id, Workouts.user_id == current_user.id).first()
+    if workout is None or not workout.is_template:
+        raise HTTPException(status_code=404, detail="Template not found")
+    
+    if workout_update.title:
+        workout.title = workout_update.title
+    
+    existing_items = {item.id: item for item in workout.workouts_items}
+    
+    for item_update in workout_update.workout_items:
+        if item_update.id:
+            workout_item = existing_items.pop(item_update.id, None)
+            if workout_item:
+                workout_item.exercise_name = item_update.exercise_name
+        else:
+            workout_item = WorkoutsItem(
+                workout_id=workout.id,
+                exercise_name=item_update.exercise_name
+            )
+            db.add(workout_item)
+            db.commit()
+            db.refresh(workout_item)
+        
+        existing_sets = {set.id: set for set in workout_item.item_sets}
+        
+        for set_update in item_update.item_sets:
+            if set_update.id:
+                item_set = existing_sets.pop(set_update.id, None)
+                if item_set:
+                    item_set.set_number = set_update.set_number
+                    item_set.weight = set_update.weight
+                    item_set.reps = set_update.reps
+            else:
+                item_set = ItemSet(
+                    workouts_item_id=workout_item.id,
+                    set_number=set_update.set_number,
+                    weight=set_update.weight,
+                    reps=set_update.reps
+                )
+                db.add(item_set)
+
+        for set_id in existing_sets:
+            db.delete(existing_sets[set_id])
+        db.commit()
+
+    for item_id in existing_items:
+        db.delete(existing_items[item_id])
+    db.commit()
+
+    updated_workout = db.query(Workouts).filter(Workouts.id == template_id).first()
+    
+    workout_dict = {
+        "id": updated_workout.id,
+        "title": updated_workout.title,
+        "created_at": updated_workout.created_at,
+        "is_template": updated_workout.is_template,
+        "workout_items": [
+            {
+                "id": item.id,
+                "exercise_name": item.exercise_name,
+                "item_sets": [
+                    {
+                        "id": set.id,
+                        "set_number": set.set_number,
+                        "weight": set.weight,
+                        "reps": set.reps
+                    } for set in item.item_sets
+                ]
+            } for item in updated_workout.workouts_items
         ]
     }
 
