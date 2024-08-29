@@ -1,0 +1,25 @@
+.card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+#calories-chart {
+    max-width: 100%;
+    height: auto;
+}
+#goal-select {
+    width: 100%;
+    padding: 0.5rem;
+}
+#calories-left, #calories-intake {
+    font-size: 1.2rem;
+    color: #b12b24;
+}
+.card-text {
+    margin-bottom: 3px !important;
+}
+
+@media (min-width: 1285px) {
+    .container {
+        max-width: 1140px;
+    }
+}
