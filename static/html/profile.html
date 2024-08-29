@@ -30,21 +30,15 @@
             </div>
         </nav>
     </header>
-    <div class="container mt-5">
+    <div class="container mt-4">
         <div class="row">
-            <!-- Profile Section -->
             <div class="col-md-4">
-                <!-- Picture Section -->
                 <div class="card">
                     <div class="card-body text-center">
                         <h5 class="card-title">Avatar</h5>
-                        <!-- Avatar Image -->
                         <img id="avatar-img" src="/static/images/user.png" class="rounded-circle" alt="User Avatar" width="150" height="150">
                         <h3 class="mt-3" id="username-title"></h3>
-                        <!-- Edit Avatar Button -->
                         <button type="button" id="edit-avatar-btn" class="btn btn-secondary w-100">Edit</button>
-                        
-                        <!-- Avatar Form -->
                         <form id="avatar-form" enctype="multipart/form-data" style="display: none;">
                             <input type="file" id="avatar-input" name="avatar" accept="image/*" style="display:none;">
                             <button type="button" class="btn btn-secondary mt-3 w-100" id="choose-photo-btn" style="background-color: #96B6C5; color: white; border: #96B6C5; height: 37.6px;" onclick="document.getElementById('avatar-input').click();">Choose New Photo</button>
@@ -57,11 +51,9 @@
                         </form>
                     </div>
                 </div>
-                <!-- Account Information -->
                 <div class="card mb-3 mt-3">
                     <div class="card-body">
                         <h5 class="card-title">Account Information</h5>
-                        <!-- Username and Email Form -->
                         <form id="personal-info-form">
                             <div class="row">
                                 <div class="mb-3">
@@ -78,7 +70,6 @@
                             <button type="button" id="cancel-personal-btn" class="btn btn-light w-100 mt-2" style="display: none;">Cancel</button>
                         </form>
                         <hr>
-                        <!-- Password Form -->
                         <form id="password-form">
                             <div class="mb-3">
                                 <label for="current-password" class="form-label">Current Password</label>
@@ -99,19 +90,15 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-md-8">
-                <!-- Body Information -->
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Body Information</h5>
-                        <!-- Gender toggle -->
                         <div class="gender-toggle">
                             <button type="button" id="male-btn" class="btn-toggle active" onclick="showMaleForm()">Male</button>
                             <button type="button" id="female-btn" class="btn-toggle" onclick="showFemaleForm()">Female</button>
                             <div class="slider"></div>
                         </div>
-                        <!-- Form for males -->
                         <form id="male-form">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -126,7 +113,7 @@
                                     <label for="male-age" class="form-label">Age <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control required" id="male-age" placeholder="Enter your age" disabled>
                                 </div>
-                                <div class="col-md-6 mb-3"></div> <!-- Empty column to align age input -->
+                                <div class="col-md-6 mb-3"></div>
                                 <div class="col-md-6 mb-3">
                                     <label for="male-neck" class="form-label">Neck Circumference (cm)</label>
                                     <input type="number" class="form-control" id="male-neck" placeholder="Enter your neck circumference" disabled>
@@ -136,7 +123,6 @@
                                     <input type="number" class="form-control" id="male-waist" placeholder="Enter your waist circumference" disabled>
                                 </div>
                             </div>
-                            <!-- Daily Activity Level Dropdown -->
                             <div class="mb-3">
                                 <label for="male-activity-level" class="form-label">Daily Activity Level <span class="text-danger">*</span></label>
                                 <select class="form-select required" id="male-activity-level" aria-label="Select daily activity level" disabled>
@@ -153,7 +139,6 @@
                             <button type="submit" id="save-body-btn-male" class="btn w-100" style="background-color: #27374D; color: white; display: none;">Save Changes</button>
                             <button type="button" id="cancel-body-btn-male" class="btn btn-light w-100 mt-2" style="display: none;">Cancel</button>
                         </form>
-                        <!-- Form for females -->
                         <form id="female-form" style="display: none;">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -181,7 +166,6 @@
                                     <input type="number" class="form-control" id="female-hip" placeholder="Enter your hip circumference" disabled>
                                 </div>
                             </div>
-                            <!-- Daily Activity Level Dropdown -->
                             <div class="mb-3">
                                 <label for="female-activity-level" class="form-label">Daily Activity Level <span class="text-danger">*</span></label>
                                 <select class="form-select required" id="female-activity-level" aria-label="Select daily activity level" disabled>
@@ -200,7 +184,6 @@
                         </form>
                     </div>
                 </div>
-                <!-- Body Goals Section -->
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Body Status</h5>
@@ -276,7 +259,6 @@
                         </div>                                        
                     </div>
                 </div>                                                                                                                                                           
-                <!-- Body Stats Graph -->
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Body History</h5>
