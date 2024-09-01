@@ -170,7 +170,7 @@ function appendDietRecord(record) {
     const tableBody = document.getElementById("diet-records");
     const row = document.createElement("tr");
 
-    const recordedTime = new Date(record.created_at).toLocaleString();
+    const recordedTime = new Date(record.created_at).toLocaleString("zh-TW", { timeZone: "Asia/Taipei" });
 
     row.innerHTML = `
         <td>${record.food}</td>
