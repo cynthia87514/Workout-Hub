@@ -181,7 +181,7 @@ async function loginUser(event) {
             const result = await response.json();
             localStorage.setItem("token", result.access_token);
             closeModal();
-            checkAuth();
+            // checkAuth();
             window.location.href = "/start";
         }
     } catch (error) {
