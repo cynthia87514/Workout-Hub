@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import datetime, date
+from pytz import timezone
 
 from dbconfig import get_db
 from service.auth import get_current_user
@@ -13,6 +14,9 @@ DietRouter = APIRouter(
     tags=["Diet"]
 )
 
+# 定義台北時區
+taipei_tz = timezone("Asia/Taipei")
+
 # 儲存 Diet 資料到資料庫
 @DietRouter.post("", response_model=DietResponse)
 def create_diet(diet: DietBase, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -23,8 +27,7 @@ def create_diet(diet: DietBase, db: Session = Depends(get_db), current_user: Use
         calories=diet.calories,
         protein=diet.protein,
         carbs=diet.carbs,
-        fats=diet.fats,
-        created_at=datetime.now()
+        fats=diet.fats
     )
     db.add(new_diet)
     db.commit()
@@ -45,6 +48,8 @@ def delete_diet(diet_id: int, db: Session = Depends(get_db), current_user: User 
 # 取得使用者的今日 Diet 資料
 @DietRouter.get("", response_model=DietListResponse)
 def get_diet(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    today = date.today()
-    diets = db.query(Diet).filter(Diet.user_id == current_user.id, Diet.created_at >= today).all()
+    now = datetime.now(taipei_tz)
+    today_start = datetime(now.year, now.month, now.day, 0, 0, 0, tzinfo=taipei_tz)
+    
+    diets = db.query(Diet).filter(Diet.user_id == current_user.id, Diet.created_at >= today_start).all()
     return {"diets": diets}
