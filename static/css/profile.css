@@ -191,6 +191,45 @@ input[disabled] {
 #female-btn.active ~ .slider {
     left: calc(50% + 5px);
 }
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+    opacity: 0.9;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-weight: bold;
+    transform: translateX(-50%);
+}
+.toast.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;} 
+    to {bottom: 30px; opacity: 0.9;}
+}
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 0.9;}
+}
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 0.9;} 
+    to {bottom: 0; opacity: 0;}
+}
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 0.9;}
+    to {bottom: 0; opacity: 0;}
+}
 
 /* hover 效果 */
 button {

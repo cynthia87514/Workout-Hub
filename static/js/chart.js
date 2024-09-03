@@ -102,7 +102,12 @@ function updateTdeeChart() {
     const defaultEee = eee;
 
     const ctx = document.getElementById("tdeeChart").getContext("2d");
-    const tdeeChart = new Chart(ctx, {
+
+    if (tdeeChart instanceof Chart) {
+        tdeeChart.destroy();
+    }
+
+    tdeeChart = new Chart(ctx, {
         type: "doughnut",   
         data: {
             labels: ["BMR", "TEF", "NEAT", "EEE"],
@@ -297,7 +302,12 @@ function updateBodyStatsChart(bodyHistory) {
     }
 
     const ctx3 = document.getElementById("bodyStatsChart").getContext("2d");
-    const bodyStatsChart = new Chart(ctx3, {
+    
+    if (bodyStatsChart instanceof Chart) {
+        bodyStatsChart.destroy();
+    }
+    
+    bodyStatsChart = new Chart(ctx3, {
         type: "line",
         data: {
             labels: labels,

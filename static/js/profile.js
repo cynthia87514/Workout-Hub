@@ -8,6 +8,7 @@ const currentPasswordInput = document.getElementById("current-password");
 const newPasswordInput = document.getElementById("new-password");
 const confirmPasswordInput = document.getElementById("confirm-password");
 let bmr, tdee, tef, neat, eee;
+let bodyStatsChart = null;
 
 // 頭像編輯相關變數
 const editAvatarBtn = document.getElementById("edit-avatar-btn");
@@ -345,14 +346,28 @@ function checkRequiredFields(form) {
 }
 
 // 顯示提示消息
-function showSaveMessage(messageContainer, message, success = true) {
-    messageContainer.textContent = message;
-    messageContainer.className = success ? "text-success" : "text-danger";
-    messageContainer.style.display = "block";
+function showToast(message, success = true) {
+    const toast = document.getElementById("toast");
+    if (!toast) {
+        createToastElement();
+    }
+    toast.textContent = message;
+    toast.style.backgroundColor = success ? "#28a745" : "#dc3545"; // 成功綠色，失敗紅色
+    toast.className = "toast show";
+    setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+    }, 3000); // 3秒後自動隱藏
+}
+
+function createToastElement() {
+    const toast = document.createElement("div");
+    toast.id = "toast";
+    toast.className = "toast";
+    document.body.appendChild(toast);
 }
 
 // 將表單數據發送到後端
-async function sendBodyInfo(data, messageContainer) {
+async function sendBodyInfo(data, messageContainer, inputs, editBtn, saveBtn, cancelBtn) {
     const response = await fetch("/api/profile/upload-bodyinfo", {
         method: "POST",
         headers: {
@@ -363,10 +378,29 @@ async function sendBodyInfo(data, messageContainer) {
     });
 
     if (response.ok) {
-        showSaveMessage(messageContainer, "Body information updated successfully!", true);
+        showToast("Body information updated successfully!", true);
+        
+        inputs.forEach(input => input.disabled = true);
+        
+        editBtn.style.display = "inline-block";
+        saveBtn.style.display = "none";
+        cancelBtn.style.display = "none";
+
+        await fetchBodyInformation();
+        await fetchBodyHistory();
     } else {
-        showSaveMessage(messageContainer, "Failed to update body information.", false);
+        showToast("Failed to update body information.", false);
     }
+}
+
+function disableInputs(inputs) {
+    inputs.forEach(input => input.disabled = true);
+}
+
+function hideSaveMessageAfterDelay(messageContainer, delay = 5000) {
+    setTimeout(() => {
+        messageContainer.style.display = "none";
+    }, delay);
 }
 
 // 3. 事件監聽器添加
@@ -375,6 +409,7 @@ async function sendBodyInfo(data, messageContainer) {
 fetchBodyInformation();
 renderTDEEPercentage();
 fetchBodyHistory();
+createToastElement();
 
 // 頭像編輯相關事件
 editAvatarBtn.addEventListener("click", function() {
@@ -599,17 +634,13 @@ cancelBodyBtnMale.addEventListener("click", () => {
 });
 
 // 保存男性表單數據
-document.getElementById("male-form").addEventListener("submit", (event) => {
+document.getElementById("male-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     if (checkRequiredFields(document.getElementById("male-form"))) {
         const data = collectBodyInfo("Male");
-        sendBodyInfo(data, messageContainerMale);
-        editBodyBtnMale.style.display = "inline-block";
-        saveBodyBtnMale.style.display = "none";
-        cancelBodyBtnMale.style.display = "none";
-        messageContainerMale.style.display = "none";
+        await sendBodyInfo(data, messageContainerMale, maleInputs, editBodyBtnMale, saveBodyBtnMale, cancelBodyBtnMale);
     } else {
-        showSaveMessage(messageContainerMale, "Please fill in all required fields.", false);
+        showToast("Please fill in all required fields.", false);
     }
 });
 
@@ -623,16 +654,12 @@ cancelBodyBtnFemale.addEventListener("click", () => {
 });
 
 // 保存女性表單數據
-document.getElementById("female-form").addEventListener("submit", (event) => {
+document.getElementById("female-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     if (checkRequiredFields(document.getElementById("female-form"))) {
         const data = collectBodyInfo("Female");
-        sendBodyInfo(data, messageContainerFemale);
-        editBodyBtnFemale.style.display = "inline-block";
-        saveBodyBtnFemale.style.display = "none";
-        cancelBodyBtnFemale.style.display = "none";
-        messageContainerFemale.style.display = "none";
+        await sendBodyInfo(data, messageContainerFemale, femaleInputs, editBodyBtnFemale, saveBodyBtnFemale, cancelBodyBtnFemale);
     } else {
-        showSaveMessage(messageContainerFemale, "Please fill in all required fields.", false);
+        showToast("Please fill in all required fields.", false);
     }
 });
