@@ -1,14 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from dbconfig import get_db
+from redisconfig import get_redis
 from model.workout import Workouts, WorkoutsItem, ItemSet
 from model.user import User
 from schema.workout import WorkoutCreate, WorkoutDetail, WorkoutResponse, WorkoutUpdate
 from service.auth import get_current_user
 from datetime import datetime
 from pytz import timezone
-import calendar
 from typing import List
+import calendar
+import json
 
 WorkoutRouter = APIRouter(
     prefix="/api",
@@ -21,9 +23,9 @@ taipei_tz = timezone("Asia/Taipei")
 def last_day_of_month(year, month):
     return calendar.monthrange(year, month)[1]
 
-# 儲存 workout 資料到資料庫
+# 儲存 workout 資料及新增模板到資料庫
 @WorkoutRouter.post("/workout", response_model=WorkoutResponse)
-def create_workout(workout: WorkoutCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def create_workout(workout: WorkoutCreate, db: Session = Depends(get_db), redis_client = Depends(get_redis), current_user: User = Depends(get_current_user)):
     new_workout = Workouts(
         user_id=current_user.id,
         title=workout.title,
@@ -52,6 +54,11 @@ def create_workout(workout: WorkoutCreate, db: Session = Depends(get_db), curren
             db.add(item_set)
         db.commit()
 
+    if workout.is_template:
+        cache_key = f"user:{current_user.id}:templates"
+        redis_client.delete(cache_key)
+        print(f"Cache cleared for key: {cache_key}")
+
     return new_workout
 
 # 刪除 workout 資料
@@ -67,21 +74,25 @@ def delete_workout(workout_id: int, db: Session = Depends(get_db), current_user:
 
 # 取得 template workout 資料
 @WorkoutRouter.get("/workout/templates", response_model=List[WorkoutDetail])
-def get_template_workouts(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    templates = db.query(Workouts).filter(
-        Workouts.user_id == current_user.id,
-        Workouts.is_template == True
-    ).order_by(Workouts.created_at.asc()).all()
+def get_template_workouts(db: Session = Depends(get_db), redis_client = Depends(get_redis), current_user: User = Depends(get_current_user)):
+    cache_key = f"user:{current_user.id}:templates"
+    cached_data = redis_client.get(cache_key)
+    
+    if cached_data:
+        print("Fetching templates data from Redis cache")
+        return json.loads(cached_data)
+    
+    try: 
+        templates = db.query(Workouts).filter(
+            Workouts.user_id == current_user.id,
+            Workouts.is_template == True
+        ).order_by(Workouts.created_at.asc()).all()
 
-    templates_detail = []
-
-    for workout in templates:
-        workout_dict = {
-            "id": workout.id,
-            "title": workout.title,
-            "created_at": workout.created_at,
-            "is_template": workout.is_template,
-            "workout_items": [
+        templates_detail = []
+        for template in templates:
+            template_dict = WorkoutDetail.model_validate(template).model_dump()
+            template_dict["created_at"] = template_dict["created_at"].isoformat()
+            template_dict["workout_items"] = [
                 {
                     "id": item.id,
                     "exercise_name": item.exercise_name,
@@ -93,22 +104,32 @@ def get_template_workouts(db: Session = Depends(get_db), current_user: User = De
                             "reps": set.reps
                         } for set in item.item_sets
                     ]
-                } for item in workout.workouts_items
+                } for item in template.workouts_items
             ]
-        }
-        templates_detail.append(workout_dict)
 
-    return templates_detail
+            templates_detail.append(template_dict)
+
+        redis_client.set(cache_key, json.dumps(templates_detail), ex=86400)
+        print("Fetching templates data from database and caching it in Redis")
+        
+        return templates_detail
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # 刪除 template workout 資料
 @WorkoutRouter.delete("/workout/templates/{template_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_template_workout(template_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def delete_template_workout(template_id: int, db: Session = Depends(get_db), redis_client = Depends(get_redis), current_user: User = Depends(get_current_user)):
     workout = db.query(Workouts).filter(Workouts.id == template_id, Workouts.user_id == current_user.id).first()
     if workout is None:
         raise HTTPException(status_code=404, detail="Template not found")
     
     db.delete(workout)
     db.commit()
+    
+    cache_key = f"user:{current_user.id}:templates"
+    redis_client.delete(cache_key)
+    print(f"Cache cleared for key: {cache_key}")
+    
     return {"message": "Template deleted successfully"}
 
 # 取得指定月份的 workout 資料
@@ -165,7 +186,7 @@ def get_workout_detail(workout_id: int, db: Session = Depends(get_db), current_u
 
 # 更新 tempalte 功能
 @WorkoutRouter.put("/workout/templates/{template_id}", response_model=WorkoutDetail)
-def update_template_workout(template_id: int, workout_update: WorkoutUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def update_template_workout(template_id: int, workout_update: WorkoutUpdate, db: Session = Depends(get_db), redis_client = Depends(get_redis), current_user: User = Depends(get_current_user)):
     workout = db.query(Workouts).filter(Workouts.id == template_id, Workouts.user_id == current_user.id).first()
     if workout is None or not workout.is_template:
         raise HTTPException(status_code=404, detail="Template not found")
@@ -238,4 +259,8 @@ def update_template_workout(template_id: int, workout_update: WorkoutUpdate, db:
         ]
     }
 
+    cache_key = f"user:{current_user.id}:templates"
+    redis_client.delete(cache_key)
+    print(f"Cache cleared for key: {cache_key}")
+    
     return workout_dict

@@ -18,10 +18,7 @@ class UserCreate(UserBase):
 class UserInDB(UserBase):
     id: int
 
-class UserInResponse(UserBase):
-    id: int
-    email: str
-    username: str
+class UserInResponse(UserInDB):
     profile_image_url: Optional[str] = None
     is_token_valid: bool
 

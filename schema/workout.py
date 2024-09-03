@@ -24,6 +24,7 @@ class ItemSetResponse(BaseModel):
 
     class Config:
         orm_mode = True
+        from_attributes = True
 
 class WorkoutsItemResponse(BaseModel):
     id: int
@@ -32,6 +33,7 @@ class WorkoutsItemResponse(BaseModel):
 
     class Config:
         orm_mode = True
+        from_attributes = True
 
 class WorkoutResponse(BaseModel):
     id: int
@@ -41,6 +43,7 @@ class WorkoutResponse(BaseModel):
 
     class Config:
         orm_mode = True
+        from_attributes = True
 
 class WorkoutDetail(BaseModel):
     id: int
@@ -51,6 +54,7 @@ class WorkoutDetail(BaseModel):
 
     class Config:
         orm_mode = True
+        from_attributes = True
         
 class ItemSetUpdate(BaseModel):
     id: Optional[int]

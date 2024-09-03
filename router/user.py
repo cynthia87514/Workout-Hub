@@ -3,9 +3,11 @@ from sqlalchemy.orm import Session
 from datetime import timedelta
 
 from dbconfig import get_db
+from redisconfig import get_redis
 from schema.user import UserCreate, UserInDB, Token, UserLogin, UserInResponse, AuthResponse
-from service.crud import create_user, authenticate_user, get_user_by_email
+from service.crud import create_user, authenticate_user
 from service.auth import create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_remaining_time, oauth2_scheme
+import json
 
 UserRouter = APIRouter(
     prefix="/api/user",
@@ -39,13 +41,26 @@ def login_for_access_token(user_login: UserLogin, db: Session = Depends(get_db))
 
 # 取得使用者登入狀態及資料
 @UserRouter.get("/auth", response_model=UserInResponse)
-def get_current_user_info(current_user: UserInDB = Depends(get_current_user), token: str = Depends(oauth2_scheme)):
+def get_current_user_info(current_user: UserInDB = Depends(get_current_user), token: str = Depends(oauth2_scheme), redis_client = Depends(get_redis)):
+    cache_key = f"user:{current_user.id}:info"
+    cached_data = redis_client.get(cache_key)
+    
+    if cached_data:
+        print("Fetching user info from Redis cache")
+        return json.loads(cached_data)
+    
     remaining_time = get_remaining_time(token)
     is_token_valid = remaining_time.total_seconds() > 0
-    return {
+    
+    user_info = {
         "id": current_user.id,
         "email": current_user.email,
         "username": current_user.username,
         "profile_image_url": current_user.profile_image_url,
         "is_token_valid": is_token_valid
     }
+    
+    redis_client.set(cache_key, json.dumps(user_info), ex=86400)
+    print("Fetching user info from database and caching it in Redis")
+    
+    return user_info
