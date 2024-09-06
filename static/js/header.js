@@ -4,7 +4,11 @@ const workoutHubButton = document.querySelector(".left");
 const startButton = document.querySelector(".start");
 const recordsButton = document.querySelector(".records");
 const dietButton = document.querySelector(".diet");
+const dropdownBoxButton = document.querySelector(".dropdownBox");
+const avatarDropdown = document.getElementById("avatarDropdown");
+const dropdownContent = document.getElementById("dropdownContent");
 const profileButton = document.querySelector(".profile");
+const bodyInfoButton = document.querySelector(".bodyInfo");
 const logoutButton = document.querySelector(".logout");
 const loginButton = document.querySelector(".login");
 
@@ -25,6 +29,9 @@ async function checkAuth() {
                 const data = await response.json();
                 if (data.is_token_valid) {
                     currentUserInfo = data; // 將使用者資料保存到全局變量
+                    if (currentUserInfo.profile_image_url) {
+                        avatarDropdown.src = currentUserInfo.profile_image_url;
+                    }
                     renderAuthPage();
                 } else {
                     alert("Your session has expired. Please log in again.");
@@ -51,16 +58,14 @@ function renderAuthPage() {
     startButton.classList.remove("hide");
     recordsButton.classList.remove("hide");
     dietButton.classList.remove("hide");
-    profileButton.classList.remove("hide");
-    logoutButton.classList.remove("hide");
+    dropdownBoxButton.classList.remove("hide");
     loginButton.classList.add("hide");
 }
 function renderUnauthPage() {
     startButton.classList.add("hide");
     recordsButton.classList.add("hide");
     dietButton.classList.add("hide");
-    profileButton.classList.add("hide");
-    logoutButton.classList.add("hide");
+    dropdownBoxButton.classList.add("hide");
     loginButton.classList.remove("hide");
 }
 // 登出
@@ -217,8 +222,26 @@ dietButton.addEventListener("click", () => {
     window.location.href = "/diet";
 })
 
+avatarDropdown.addEventListener("click", function() {
+    if (dropdownContent.style.display === "block") {
+        dropdownContent.style.display = "none";
+    } else {
+        dropdownContent.style.display = "block";
+    }
+});
+
+window.addEventListener("click", function(event) {
+    if (!avatarDropdown.contains(event.target) && !dropdownContent.contains(event.target)) {
+        dropdownContent.style.display = "none";
+    }
+});
+
 profileButton.addEventListener("click", () => {
     window.location.href = "/profile";
+})
+
+bodyInfoButton.addEventListener("click", () => {
+    window.location.href = "/bodyinfo";
 })
 
 logoutButton.addEventListener("click", () => {
