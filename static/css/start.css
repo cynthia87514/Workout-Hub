@@ -25,7 +25,6 @@ main {
 }
 .title {
     font-size: 36px;
-    font-family: "Poppins", sans-serif;
     font-weight: 700;
     color: #27374D;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
@@ -86,7 +85,6 @@ hr {
 }
 .qS-text, .t-text {
     font-size: 30px;
-    font-family: "Lato", sans-serif;
     font-weight: 700;
 }
 .qS-button, .add-template {
@@ -96,7 +94,6 @@ hr {
     width: 340px;
     padding: 10px 20px;
     font-size: 24px;
-    font-family: "Poppins", sans-serif;
     font-weight: 700;
     color: #FFFFFF;
     background-color: #96B6C5;
@@ -117,7 +114,6 @@ hr {
     margin-top: 0px;
     margin-bottom: 10px;
     font-size: 28px;
-    font-family: "Lato", sans-serif;
     font-weight: 600;
 }
 .template-card-box {
@@ -138,7 +134,7 @@ hr {
     border-radius: 10px;
     padding: 15px;
     width: auto;
-    height: 200px;
+    height: 208px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     cursor: pointer;
 }
@@ -235,7 +231,6 @@ hr {
     align-items: center;
     gap: 10px;
     margin-top: 20px;
-    font-family: Arial, sans-serif;
 }
 .topic-input, .templateTopic-input {
     font-size: 1.2rem;
@@ -243,7 +238,6 @@ hr {
     border: 2px solid #96B6C5;
     border-radius: 5px;
     display: none;
-    font-family: "Poppins", sans-serif;
     width: 250px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: border-color 0.3s, box-shadow 0.3s;
@@ -258,8 +252,7 @@ hr {
 .topic, .templateTopic {
     font-size: 1.5rem;
     color: #007bff;
-    font-family: "Poppins", sans-serif;
-    font-weight: bold;
+    font-weight: 900;
     margin-right: 10px;
 }
 .edit-icon, .calendar-icon, .camera-icon, .template-edit-icon {
@@ -275,7 +268,6 @@ hr {
     margin-top: 20px;
     padding: 10px 20px;
     font-size: 24px;
-    font-family: "Poppins", sans-serif;
     font-weight: 700;
     color: #FFFFFF;
     background-color: #96B6C5;
@@ -300,6 +292,8 @@ dialog {
     border-radius: 6px;
     padding: 20px;
     text-align: center;
+    font-size: 20px;
+    color: #2c3e50;
 }
 .dialog-buttons {
     display: flex;
@@ -310,7 +304,6 @@ dialog {
     margin: 0 10px;
     padding: 10px 20px;
     font-size: 18px;
-    font-family: "Lato", sans-serif;
     font-weight: 500;
     color: #FFFFFF;
     background-color: #96B6C5;
@@ -318,6 +311,7 @@ dialog {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-family: "Lato", sans-serif !important;
 }
 .exercise-modal {
     background-color: rgba(0, 0, 0, 0.25);
@@ -475,7 +469,6 @@ dialog {
 }
 .exercise-name {
     font-size: 16px;
-    font-family: "Lato", sans-serif;
     font-weight: 500;
 }
 .exercise-body-part {
@@ -652,7 +645,6 @@ dialog {
     margin-top: 20px;
 }
 .info-dialog-close {
-    font-family: "Caladea", serif;
     font-size: 14px;
     cursor: pointer;
 }
