@@ -1,22 +1,28 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
 from dbconfig import get_db
 from redisconfig import get_redis
-from schema.user import UserCreate, UserInDB, Token, UserLogin, UserInResponse, AuthResponse
+from schema.user import UserCreate, UserInDB, Token, UserLogin, UserInResponse, AuthResponse, GoogleLoginRequest
 from service.crud import create_user, authenticate_user
-from service.auth import create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_remaining_time, oauth2_scheme
+from service.auth import create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_remaining_time, oauth2_scheme, google_login
 import json
+import requests
+import os
+from dotenv import load_dotenv
 
 UserRouter = APIRouter(
     prefix="/api/user",
     tags=["User"]
 )
 
+load_dotenv()
+
 # 使用者註冊
 @UserRouter.post("/auth", response_model=AuthResponse)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
+    user.login_method = "password"
     try:
         create_user(db, user)
         return {"status": "ok"}
@@ -39,6 +45,37 @@ def login_for_access_token(user_login: UserLogin, db: Session = Depends(get_db))
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+# Google 登入的 API 路徑
+@UserRouter.post("/auth/google", response_model=Token)
+def login_with_google(request: GoogleLoginRequest, db: Session = Depends(get_db)):
+    return google_login(request.token, db)
+
+# Google OAuth callback route
+@UserRouter.get("/auth/google/callback")
+async def google_callback(request: Request, db: Session = Depends(get_db)):
+    code = request.query_params.get("code")
+    if not code:
+        return {"error": "Code not found"}
+    
+    # Exchange the code for an access token
+    token_url = "https://oauth2.googleapis.com/token"
+    payload = {
+        "code": code,
+        "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+        "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
+        "redirect_uri": os.getenv("GOOGLE_REDIRECT_URI"),
+        "grant_type": "authorization_code"
+    }
+
+    token_response = requests.post(token_url, data=payload)
+    token_json = token_response.json()
+
+    if "access_token" in token_json:
+        access_token = token_json["access_token"]
+        return {"access_token": access_token}
+    else:
+        return {"error": "Failed to get access token"}
+
 # 取得使用者登入狀態及資料
 @UserRouter.get("/auth", response_model=UserInResponse)
 def get_current_user_info(current_user: UserInDB = Depends(get_current_user), token: str = Depends(oauth2_scheme), redis_client = Depends(get_redis)):
@@ -57,6 +94,7 @@ def get_current_user_info(current_user: UserInDB = Depends(get_current_user), to
         "email": current_user.email,
         "username": current_user.username,
         "profile_image_url": current_user.profile_image_url,
+        "login_method": current_user.login_method,
         "is_token_valid": is_token_valid
     }
     

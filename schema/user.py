@@ -13,13 +13,16 @@ class UserBase(BaseModel):
     username: str
 
 class UserCreate(UserBase):
-    password: str
+    password: Optional[str] = None
+    login_method: str
+    profile_image_url: Optional[str] = None
 
 class UserInDB(UserBase):
     id: int
 
 class UserInResponse(UserInDB):
     profile_image_url: Optional[str] = None
+    login_method: str
     is_token_valid: bool
 
 class UserLogin(BaseModel):
@@ -28,3 +31,6 @@ class UserLogin(BaseModel):
 
 class AuthResponse(BaseModel):
     status: str
+    
+class GoogleLoginRequest(BaseModel):
+    token: str

@@ -6,18 +6,24 @@ from sqlalchemy.orm import Session
 import os
 from dotenv import load_dotenv
 
-from schema.user import Token
-from service.crud import get_user_by_email
+from schema.user import UserCreate
+from service.crud import get_user_by_email, create_user
 from dbconfig import get_db
+from google.auth.transport.requests import Request
+from google.oauth2 import id_token
 
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/auth")
 
+# 生成 JWT token
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
     if expires_delta:
@@ -44,12 +50,6 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub", None)
-        if email is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
         
         # 檢查過期時間
         remaining_time = get_remaining_time(token)
@@ -82,3 +82,44 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         )
     
     return user
+
+# 處理 Google Token 驗證
+def verify_google_token(token: str):
+    try:
+        idinfo = id_token.verify_oauth2_token(token, Request(), GOOGLE_CLIENT_ID)
+        if idinfo["iss"] not in ["accounts.google.com", "https://accounts.google.com"]:
+            raise ValueError("Invalid issuer.")
+        return idinfo
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail="Invalid Google token")
+    
+# Google OAuth 登入處理
+def google_login(token: str, db: Session = Depends(get_db)):
+    google_user_info = verify_google_token(token)
+    email = google_user_info["email"]
+    username = google_user_info.get("name", email.split("@")[0])
+    profile_image_url = google_user_info.get("picture")
+
+    # 查找或創建新使用者
+    user = get_user_by_email(db, email=email)
+    if user:
+        if user.login_method == "password":
+            raise HTTPException(
+                status_code=400, 
+                detail="This email is already registered with a password. Please login using your password or link your Google account in your profile settings."
+            )
+    else:
+        user_data = UserCreate(
+            username=username, 
+            email=email, 
+            password=None, 
+            profile_image_url=profile_image_url,
+            login_method="google"
+        )
+        create_user(db, user_data)
+        user = get_user_by_email(db, email=email)
+
+    # 生成 JWT token 並返回
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
+    return {"access_token": access_token, "token_type": "bearer"}

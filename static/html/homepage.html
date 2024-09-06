@@ -7,6 +7,7 @@
     <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="/static/css/header.css"/>
     <link rel="stylesheet" type="text/css" href="/static/css/homepage.css"/>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="/static/js/header.js" defer></script>
     <script src="/static/js/homepage.js" defer></script>
 </head>
@@ -19,8 +20,14 @@
                     <div class="start hide">Start</div>
                     <div class="records hide">Records</div>
                     <div class="diet hide">Diet</div>
-                    <div class="profile hide">Profile</div>
-                    <div class="logout hide">Log Out</div>
+                    <div class="dropdownBox hide">
+                        <img src="/static/images/user.png" class="avatar-icon rounded-circle" alt="User Avatar" width="40" height="40" id="avatarDropdown">
+                        <div class="dropdown-content" id="dropdownContent">
+                            <div class="profile">Profile</div>
+                            <div class="bodyInfo">Body Info</div>
+                            <div class="logout">Log Out</div>
+                        </div>
+                    </div>
                     <div class="login">Log in</div>
                 </div>
             </div>
@@ -39,8 +46,17 @@
                         <input type="password" id="loginPassword" name="password" required>
                     </div>
                     <button type="submit" class="auth-btn">Log In</button>
-                    <button type="button" class="auth-btn switch-modal" data-target="registerDialog">Sign Up</button>
+                    <div class="divider">
+                        <span>Or With</span>
+                    </div>
                 </form>
+                <button class="auth-btn" id="google-login-btn">
+                    <img src="/static/images/google.png" alt="Google Logo" class="google-logo">
+                    Continue with Google
+                </button>
+                <div class="switch-auth">
+                    Don't have an account? <a href="#" class="switch-modal" data-target="registerDialog">Sign Up</a>
+                </div>
             </div>
         </div>
         <div id="registerDialog" class="auth-modal">
@@ -61,8 +77,10 @@
                         <input type="password" id="registerPassword" name="password" required>
                     </div>
                     <button type="submit" class="auth-btn">Sign Up</button>
-                    <button type="button" class="auth-btn switch-modal" data-target="loginDialog">Log In</button>
                 </form>
+                <div class="switch-auth">
+                    Already have an account? <a href="#" class="switch-modal" data-target="loginDialog">Log In</a>
+                </div>
             </div>
         </div>
     </header>
@@ -77,5 +95,8 @@
             </div>
         </section>
     </main>
+    <footer>
+        <div class="copyright">COPYRIGHT © 2024 Workout Hub</div>
+    </footer>
 </body>
 </html>
