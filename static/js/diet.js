@@ -1,4 +1,5 @@
 // 定義變數
+let isLoading = true;
 let bodyInformation = null;
 const ctxLeft = document.getElementById("calories-chart-left").getContext("2d");
 const ctxIntake = document.getElementById("calories-chart-intake").getContext("2d");
@@ -66,8 +67,10 @@ initialize();
 // 初始化流程
 async function initialize() {
     await fetchBodyInformation();
-    updateCaloriesToConsume();
-    fetchTodayDietRecords();
+    await updateCaloriesToConsume();
+    await fetchTodayDietRecords();
+    isLoading = false;
+    checkAndDisableFormIfNoBodyInfo();
 
     // 添加事件監聽
     // --------------------------------------------------
@@ -113,7 +116,7 @@ function renderPage() {
 }
 
 // 更新 Calories to Consume 中的乘數和結果
-function updateCaloriesToConsume() {
+async function updateCaloriesToConsume() {
     const selectedGoal = goalSelect.value;
     const multiplier = goalMultipliers[selectedGoal];
     
@@ -211,8 +214,8 @@ function updateCaloriesLeftAfterFetch(consumedCalories) {
         `Consume (${consumePercentage}%)`
     ];
     caloriesLeftChart.data.datasets[0].data = [remainingCalories, consumedCalories];
-    caloriesLeftChart.data.datasets[0].backgroundColor = ["#b12b24", "#C9DABF"];
-    caloriesLeftChart.data.datasets[0].borderColor = ["#b12b24", "#C9DABF"];
+    caloriesLeftChart.data.datasets[0].backgroundColor = ["#C9DABF", "#5F6F65"];
+    caloriesLeftChart.data.datasets[0].borderColor = ["#C9DABF", "#5F6F65"];
     caloriesLeft.textContent = `${remainingCalories.toFixed(2)} kcal`;
     caloriesLeftChart.update();
 }
@@ -258,15 +261,28 @@ function resetMacrosChart() {
     document.getElementById("calories-intake").textContent = `? kcal`;
 }
 
+// 檢查是否需要禁用表單，若 caloriesLeft 為 "? kcal" 則禁用表單
+function checkAndDisableFormIfNoBodyInfo() {
+    if (isLoading) return;
+
+    if (caloriesLeft.textContent === "? kcal") {
+        intakeForm.querySelectorAll("input, button").forEach(element => {
+            element.disabled = true;
+            element.classList.add("disabled-field");
+        });
+        showToast("Please go to Body Info page, enter your body information to get more services.", false);
+    } else {
+        // 如果 caloriesLeft 有有效數值，解除禁用
+        intakeForm.querySelectorAll("input, button").forEach(element => {
+            element.disabled = false;
+            element.classList.remove("disabled-field");
+        });
+    }
+}
+
 // 表單提交
 function handleFormSubmit(event) {
     event.preventDefault();
-
-    // 若顯示 "? kcal"，代表使用者尚未輸入身體資訊，阻止表單提交
-    if (caloriesLeft.textContent === "? kcal") {
-        showToast("Please go to Profile page, enter your body information to get more services.");
-        return;
-    }
 
     const form = document.getElementById("intake-form");
     const food = document.getElementById("food-input").value;
@@ -308,29 +324,26 @@ function handleFormSubmit(event) {
     });
 }
 
-// 顯示 Toast 提示
-function showToast(message) {
-    const toastContainer = document.createElement("div");
-    toastContainer.className = "toast-container position-fixed bottom-0 end-0 p-3";
-    toastContainer.innerHTML = `
-        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    ${message}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(toastContainer);
+// 顯示提示消息
+function showToast(message, success = true) {
+    let toast = document.getElementById("toast");
+    if (!toast) {
+        toast = createToastElement();
+    }
+    toast.textContent = message;
+    toast.style.backgroundColor = success ? "#28a745" : "#dc3545";
+    toast.className = "toast show";
+    setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+    }, 10000);
+}
 
-    const toast = new bootstrap.Toast(toastContainer.querySelector(".toast"));
-    toast.show();
-
-    // Toast 消失後自動移除容器
-    toastContainer.addEventListener("hidden.bs.toast", () => {
-        toastContainer.remove();
-    });
+function createToastElement() {
+    const toast = document.createElement("div");
+    toast.id = "toast";
+    toast.className = "toast";
+    document.body.appendChild(toast);
+    return toast;
 }
 
 // 更新 Calories Intake Today 圖表

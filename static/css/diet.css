@@ -1,6 +1,10 @@
-.card-title {
-    font-size: 1.2rem;
-    font-weight: bold;
+.container {
+    margin-bottom: 16px;
+}
+h5.card-title {
+    color: #2c3e50;
+    font-weight: 600;
+    text-align: left;
 }
 #calories-chart {
     max-width: 100%;
@@ -17,7 +21,58 @@
 .card-text {
     margin-bottom: 3px !important;
 }
-
+.btn-primary {
+    --bs-btn-bg: #96B6C5;
+    --bs-btn-border-color: #96B6C5;
+    --bs-btn-hover-bg: #526D82;
+    --bs-btn-hover-border-color: #526D82;
+    --bs-btn-active-bg: #526D82;
+    --bs-btn-active-border-color: #526D82;
+}
+.btn-danger {
+    --bs-btn-bg: #b12b24;
+    --bs-btn-border-color: #b12b24;
+}
+.btn-primary, .btn-danger {
+    transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+.btn-primary:hover, .btn-danger:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+.table td {
+    vertical-align: middle;
+}
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+    opacity: 0.9;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-weight: bold;
+    transform: translateX(-50%);
+}
+.toast.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+/* 當表單輸入框禁用時，顯示禁用符號 */
+.disabled-field:hover {
+    cursor: not-allowed !important;
+}
+#logIntake.disabled-field:hover {
+    background-color: #526D82 !important;
+}
 @media (min-width: 1285px) {
     .container {
         max-width: 1140px;

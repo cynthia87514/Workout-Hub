@@ -22,8 +22,14 @@
                     <div class="start hide">Start</div>
                     <div class="records hide">Records</div>
                     <div class="diet hide">Diet</div>
-                    <div class="profile hide">Profile</div>
-                    <div class="logout hide">Log Out</div>
+                    <div class="dropdownBox hide">
+                        <img src="/static/images/user.png" class="avatar-icon rounded-circle" alt="User Avatar" width="40" height="40" id="avatarDropdown">
+                        <div class="dropdown-content" id="dropdownContent">
+                            <div class="profile">Profile</div>
+                            <div class="bodyInfo">Body Info</div>
+                            <div class="logout">Log Out</div>
+                        </div>
+                    </div>
                     <div class="login">Log in</div>
                 </div>
             </div>
@@ -35,14 +41,14 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Your BMR</h5>
-                        <p id="bmr-value-up" class="card-text">Please go to Profile page,</p>
+                        <p id="bmr-value-up" class="card-text">Please go to Body Info page,</p>
                         <p id="bmr-value-down" class="card-text">enter your body information to get BMR</p>
                     </div>
                 </div>
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Your TDEE</h5>
-                        <p id="tdee-value-up" class="card-text">Please go to Profile page,</p>
+                        <p id="tdee-value-up" class="card-text">Please go to Body Info page,</p>
                         <p id="tdee-value-down" class="card-text">enter your body information to get tdee</p>
                     </div>
                 </div>
@@ -132,7 +138,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Log Intake</button>
+                            <div class="row">
+                                <div class="col-md-4 offset-md-8 text-end">
+                                    <button type="submit" class="btn btn-primary w-50" id="logIntake">Log Intake</button>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -162,6 +172,9 @@
                 </div>
             </div>
         </div>     
-    </div>    
+    </div>
+    <footer>
+        <div class="copyright">COPYRIGHT © 2024 Workout Hub</div>
+    </footer> 
 </body>
 </html>
