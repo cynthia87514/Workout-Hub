@@ -27,13 +27,17 @@ async def index():
 async def index():
     return FileResponse("./static/html/records.html", media_type="text/html")
 
+@app.get("/diet")
+async def index():
+    return FileResponse("./static/html/diet.html", media_type="text/html")
+
 @app.get("/profile")
 async def index():
     return FileResponse("./static/html/profile.html", media_type="text/html")
 
-@app.get("/diet")
+@app.get("/bodyinfo")
 async def index():
-    return FileResponse("./static/html/diet.html", media_type="text/html")
+    return FileResponse("./static/html/bodyinfo.html", media_type="text/html")
 
 app.include_router(ExerciseRouter)
 app.include_router(UserRouter)

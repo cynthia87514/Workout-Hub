@@ -7,8 +7,6 @@ const emailInput = document.getElementById("email");
 const currentPasswordInput = document.getElementById("current-password");
 const newPasswordInput = document.getElementById("new-password");
 const confirmPasswordInput = document.getElementById("confirm-password");
-let bmr, tdee, tef, neat, eee;
-let bodyStatsChart = null;
 
 // 頭像編輯相關變數
 const editAvatarBtn = document.getElementById("edit-avatar-btn");
@@ -27,34 +25,6 @@ const editPasswordBtn = document.getElementById("edit-password-btn");
 const savePasswordBtn = document.getElementById("save-password-btn");
 const cancelPasswordBtn = document.getElementById("cancel-password-btn");
 
-// 身體資訊編輯相關按鈕
-const messageContainerMale = document.getElementById("male-form-message");
-const editBodyBtnMale = document.getElementById("edit-body-btn-male");
-const saveBodyBtnMale = document.getElementById("save-body-btn-male");
-const cancelBodyBtnMale = document.getElementById("cancel-body-btn-male");
-const maleInputs = [
-    document.getElementById("male-height"),
-    document.getElementById("male-weight"),
-    document.getElementById("male-age"),
-    document.getElementById("male-neck"),
-    document.getElementById("male-waist"),
-    document.getElementById("male-activity-level")
-];
-
-const messageContainerFemale = document.getElementById("female-form-message");
-const editBodyBtnFemale = document.getElementById("edit-body-btn-female");
-const saveBodyBtnFemale = document.getElementById("save-body-btn-female");
-const cancelBodyBtnFemale = document.getElementById("cancel-body-btn-female");
-const femaleInputs = [
-    document.getElementById("female-height"),
-    document.getElementById("female-weight"),
-    document.getElementById("female-age"),
-    document.getElementById("female-neck"),
-    document.getElementById("female-waist"),
-    document.getElementById("female-hip"),
-    document.getElementById("female-activity-level")
-];
-
 // 電子郵件錯誤提示
 const emailErrorText = document.createElement("small");
 emailErrorText.style.color = "red";
@@ -71,12 +41,9 @@ confirmPasswordInput.parentNode.appendChild(confirmPasswordStatus);
 // 緩存變數
 let cachedPassword = null;
 let debounceTimeout = null;
-let originalMaleValues = maleInputs.map(input => input.value);
-let originalFemaleValues = femaleInputs.map(input => input.value);
 
 // 2. 功能函數定義
 // --------------------------------------------------
-
 // 初始化 Profile 頁面
 function initializeProfilePage() {
     if (currentUserInfo) {
@@ -85,6 +52,14 @@ function initializeProfilePage() {
         emailInput.value = currentUserInfo.email;
         if (currentUserInfo.profile_image_url) {
             avatar.src = currentUserInfo.profile_image_url;
+        }
+        if (currentUserInfo.login_method === "google") {
+            editPasswordBtn.style.display = "none";
+            currentPasswordInput.placeholder = "No password required with Google login";
+            newPasswordInput.placeholder = "Not available with Google login";
+            confirmPasswordInput.placeholder = "Not available with Google login";
+        } else {
+            editPasswordBtn.style.display = "block";
         }
     } else {
         console.error("User information is not available.");
@@ -109,8 +84,6 @@ function cancelEditMode(inputs, originalValues, editBtn, saveBtn, cancelBtn) {
     editBtn.style.display = "inline-block";
     saveBtn.style.display = "none";
     cancelBtn.style.display = "none";
-    messageContainerMale.style.display = "none";
-    messageContainerFemale.style.display = "none";
 }
 
 // 驗證並更新使用者信息
@@ -225,6 +198,7 @@ async function uploadAvatar(formData) {
 
 function updateAvatarImage(imageUrl) {
     avatar.src = imageUrl;
+    avatarDropdown.src = imageUrl;
 }
 
 function deleteAvatarImage(event) {
@@ -241,6 +215,7 @@ function deleteAvatarImage(event) {
         if (data.status === "ok") {
             // 更新前端顯示的頭像
             avatar.src = "/static/images/user.png";
+            avatarDropdown.src = "/static/images/user.png";
             confirmAvatarBtn.style.display = "none";
             avatarForm.style.display = "none";
             editAvatarBtn.style.display = "block";
@@ -250,167 +225,9 @@ function deleteAvatarImage(event) {
         console.error("Error deleting avatar:", error);
     });
 }
-// 個人身體資訊表單顯示
-function showMaleForm() {
-    document.getElementById("male-form").style.display = "block";
-    document.getElementById("female-form").style.display = "none";
-    document.getElementById("male-btn").classList.add("active");
-    document.getElementById("female-btn").classList.remove("active");
-    cancelEditMode(femaleInputs, originalFemaleValues, editBodyBtnFemale, saveBodyBtnFemale, cancelBodyBtnFemale);
-}
-
-function showFemaleForm() {
-    document.getElementById("male-form").style.display = "none";
-    document.getElementById("female-form").style.display = "block";
-    document.getElementById("male-btn").classList.remove("active");
-    document.getElementById("female-btn").classList.add("active");
-    cancelEditMode(maleInputs, originalMaleValues, editBodyBtnMale, saveBodyBtnMale, cancelBodyBtnMale);
-}
-
-async function fetchBodyHistory() {
-    try {
-        const response = await fetch("/api/profile/bodyhistory", {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${localStorage.getItem("token")}`,
-                "Content-Type": "application/json"
-            }
-        });
-
-        if (response.ok) {
-            const bodyHistory = await response.json();
-
-            if (bodyHistory && bodyHistory.length > 0) {
-                updateBodyStatsChart(bodyHistory);;
-            } else {
-                updateBodyStatsChart([]);
-            }
-        } else {
-            console.error("Failed to fetch body history:", response.statusText);
-            updateBodyStatsChart([]);
-        }
-    } catch (error) {
-        console.error("Error fetching body history:", error);
-        updateBodyStatsChart([]);
-    }
-}
-
-// 收集表單數據
-function collectBodyInfo(gender) {
-    let data = {};
-
-    if (gender === "Male") {
-        data = {
-            gender: "Male",
-            height: parseFloat(document.getElementById("male-height").value),
-            weight: parseFloat(document.getElementById("male-weight").value),
-            age: parseInt(document.getElementById("male-age").value),
-            neck_circumference: parseFloat(document.getElementById("male-neck").value),
-            waist_circumference: parseFloat(document.getElementById("male-waist").value),
-            activity_level: extractActivityLevel(document.getElementById("male-activity-level").value)
-        };
-    } else if (gender === "Female") {
-        data = {
-            gender: "Female",
-            height: parseFloat(document.getElementById("female-height").value),
-            weight: parseFloat(document.getElementById("female-weight").value),
-            age: parseInt(document.getElementById("female-age").value),
-            neck_circumference: parseFloat(document.getElementById("female-neck").value),
-            waist_circumference: parseFloat(document.getElementById("female-waist").value),
-            hip_circumference: parseFloat(document.getElementById("female-hip").value),
-            activity_level: extractActivityLevel(document.getElementById("female-activity-level").value)
-        };
-    }
-    return data;
-}
-
-function extractActivityLevel(value) {
-    return value.split(":")[0].trim();
-}
-
-// 檢查必填欄位是否有值
-function checkRequiredFields(form) {
-    const requiredFields = form.querySelectorAll(".required");
-    let valid = true;
-
-    requiredFields.forEach(field => {
-        if (!field.value) {
-            valid = false;
-            field.classList.add("is-invalid");
-        } else {
-            field.classList.remove("is-invalid");
-        }
-    });
-
-    return valid;
-}
-
-// 顯示提示消息
-function showToast(message, success = true) {
-    const toast = document.getElementById("toast");
-    if (!toast) {
-        createToastElement();
-    }
-    toast.textContent = message;
-    toast.style.backgroundColor = success ? "#28a745" : "#dc3545"; // 成功綠色，失敗紅色
-    toast.className = "toast show";
-    setTimeout(() => {
-        toast.className = toast.className.replace("show", "");
-    }, 3000); // 3秒後自動隱藏
-}
-
-function createToastElement() {
-    const toast = document.createElement("div");
-    toast.id = "toast";
-    toast.className = "toast";
-    document.body.appendChild(toast);
-}
-
-// 將表單數據發送到後端
-async function sendBodyInfo(data, messageContainer, inputs, editBtn, saveBtn, cancelBtn) {
-    const response = await fetch("/api/profile/upload-bodyinfo", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify(data)
-    });
-
-    if (response.ok) {
-        showToast("Body information updated successfully!", true);
-        
-        inputs.forEach(input => input.disabled = true);
-        
-        editBtn.style.display = "inline-block";
-        saveBtn.style.display = "none";
-        cancelBtn.style.display = "none";
-
-        await fetchBodyInformation();
-        await fetchBodyHistory();
-    } else {
-        showToast("Failed to update body information.", false);
-    }
-}
-
-function disableInputs(inputs) {
-    inputs.forEach(input => input.disabled = true);
-}
-
-function hideSaveMessageAfterDelay(messageContainer, delay = 5000) {
-    setTimeout(() => {
-        messageContainer.style.display = "none";
-    }, delay);
-}
 
 // 3. 事件監聽器添加
 // --------------------------------------------------
-// 頁面初始化
-fetchBodyInformation();
-renderTDEEPercentage();
-fetchBodyHistory();
-createToastElement();
-
 // 頭像編輯相關事件
 editAvatarBtn.addEventListener("click", function() {
     editAvatarBtn.style.display = "none";
@@ -476,7 +293,12 @@ avatarForm.addEventListener("submit", function(event) {
 
 // 開啟/取消個人信息編輯模式
 editPersonalBtn.addEventListener("click", function() {
-    enableEditMode([usernameInput, emailInput], editPersonalBtn, savePersonalBtn, cancelPersonalBtn);
+    if (currentUserInfo.login_method === "google") {
+        enableEditMode([usernameInput], editPersonalBtn, savePersonalBtn, cancelPersonalBtn);
+        showToast("Email change is not available with Google login.", false);
+    } else {
+        enableEditMode([usernameInput, emailInput], editPersonalBtn, savePersonalBtn, cancelPersonalBtn);
+    }
 });
 
 cancelPersonalBtn.addEventListener("click", function() {
@@ -487,6 +309,28 @@ cancelPersonalBtn.addEventListener("click", function() {
     emailErrorText.textContent = "";
     emailInput.style.backgroundColor = "#e9ecef";
 });
+
+// 顯示提示消息
+function showToast(message, success = true) {
+    let toast = document.getElementById("toast");
+    if (!toast) {
+        createToastElement();
+        toast = document.getElementById("toast");
+    }
+    toast.textContent = message;
+    toast.style.backgroundColor = success ? "#28a745" : "#dc3545";
+    toast.className = "toast show";
+    setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+    }, 5000);
+}
+
+function createToastElement() {
+    const toast = document.createElement("div");
+    toast.id = "toast";
+    toast.className = "toast";
+    document.body.appendChild(toast);
+}
 
 // 保存個人信息
 document.getElementById("personal-info-form").addEventListener("submit", async function(event) {
@@ -515,8 +359,8 @@ document.getElementById("personal-info-form").addEventListener("submit", async f
 // 密碼相關事件監聽
 editPasswordBtn.addEventListener("click", function() {
     enableEditMode([currentPasswordInput], editPasswordBtn, savePasswordBtn, cancelPasswordBtn);
-    resetPasswordInputs();  // 清除狀態信息 
-    savePasswordBtn.disabled = true;  // 禁用 Save 按鈕 
+    resetPasswordInputs(); 
+    savePasswordBtn.disabled = true; 
 });
 
 cancelPasswordBtn.addEventListener("click", function() {
@@ -621,45 +465,5 @@ document.getElementById("password-form").addEventListener("submit", async functi
         cancelPasswordBtn.style.display = "none";
     } else {
         alert("Failed to update password, plaese try again.");
-    }
-});
-
-// 男性身體資訊編輯事件
-editBodyBtnMale.addEventListener("click", () => {
-    enableEditMode(maleInputs, editBodyBtnMale, saveBodyBtnMale, cancelBodyBtnMale);
-});
-
-cancelBodyBtnMale.addEventListener("click", () => {
-    cancelEditMode(maleInputs, originalMaleValues, editBodyBtnMale, saveBodyBtnMale, cancelBodyBtnMale);
-});
-
-// 保存男性表單數據
-document.getElementById("male-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (checkRequiredFields(document.getElementById("male-form"))) {
-        const data = collectBodyInfo("Male");
-        await sendBodyInfo(data, messageContainerMale, maleInputs, editBodyBtnMale, saveBodyBtnMale, cancelBodyBtnMale);
-    } else {
-        showToast("Please fill in all required fields.", false);
-    }
-});
-
-// 女性身體資訊編輯事件
-editBodyBtnFemale.addEventListener("click", () => {
-    enableEditMode(femaleInputs, editBodyBtnFemale, saveBodyBtnFemale, cancelBodyBtnFemale);
-});
-
-cancelBodyBtnFemale.addEventListener("click", () => {
-    cancelEditMode(femaleInputs, originalFemaleValues, editBodyBtnFemale, saveBodyBtnFemale, cancelBodyBtnFemale);
-});
-
-// 保存女性表單數據
-document.getElementById("female-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (checkRequiredFields(document.getElementById("female-form"))) {
-        const data = collectBodyInfo("Female");
-        await sendBodyInfo(data, messageContainerFemale, femaleInputs, editBodyBtnFemale, saveBodyBtnFemale, cancelBodyBtnFemale);
-    } else {
-        showToast("Please fill in all required fields.", false);
     }
 });

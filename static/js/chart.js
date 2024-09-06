@@ -10,8 +10,6 @@ async function fetchBodyInformation() {
     if (response.ok) {
         const bodyInfo = await response.json();
         if (!bodyInfo.gender && !bodyInfo.height && !bodyInfo.weight && !bodyInfo.age) {
-            bmr = 1; tdee = 1; tef = 1; neat = 1; eee = 1;
-            updateTdeeChart();
             return;
         }
 
@@ -66,17 +64,8 @@ async function fetchBodyInformation() {
         tdee = bodyInfo.tdee;
         document.querySelector(".bmr-title").textContent = `${bmr} kcal`;
         document.querySelector(".tdee-title").textContent = `${tdee} kcal`;
-
-        const remainingEnergy = tdee - bmr;
-        tef = remainingEnergy * 0.33;
-        neat = remainingEnergy * 0.33;
-        eee = remainingEnergy - (tef + neat);
-
-        updateTdeeChart();
     } else {
         console.error("Failed to fetch body information.");
-        bmr = 1; tdee = 1; tef = 1; neat = 1; eee = 1;
-        updateTdeeChart();
     }
 }
 
@@ -92,197 +81,6 @@ function calculateBmiIndicatorPosition(bmi, minBmi = 15, maxBmi = 40) {
     if (bmi > maxBmi) bmi = maxBmi;
     const position = ((bmi - minBmi) / (maxBmi - minBmi)) * 100;
     return position;
-}
-
-// TDEE 圖表
-function updateTdeeChart() {
-    const defaultBmr = bmr;
-    const defaultTef = tef;
-    const defaultNeat = neat;
-    const defaultEee = eee;
-
-    const ctx = document.getElementById("tdeeChart").getContext("2d");
-
-    if (tdeeChart instanceof Chart) {
-        tdeeChart.destroy();
-    }
-
-    tdeeChart = new Chart(ctx, {
-        type: "doughnut",   
-        data: {
-            labels: ["BMR", "TEF", "NEAT", "EEE"],
-            datasets: [{
-                label: "TDEE 組成部分",
-                data: [defaultBmr, defaultTef, defaultNeat, defaultEee],
-                backgroundColor: ["#C9DABF", "#9CA986", "#808D7C", "#5F6F65"],
-                borderColor: ["#ffffff", "#ffffff", "#ffffff", "#ffffff"],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: "left",
-                    align: 'center',
-                    labels: {
-                        boxWidth: 20,
-                        padding: 20,
-                        usePointStyle: true,
-                        font: {
-                            family: "Caladea",
-                        }
-                    },
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            return tooltipItem.label + ": " + tooltipItem.raw.toFixed(2) + " kcal";
-                        }
-                    }
-                },
-                centerText: {}
-            }
-        }
-    });
-
-    // 註冊插件
-    Chart.register(centerTextPlugin);
-}
-
-// 自定義 Chart.js 插件，用於在 doughnut 圖表的中心顯示文字
-const centerTextPlugin = {
-    id: 'centerText',
-    beforeDraw: function(chart) {
-        if (chart.config.type === 'doughnut') {
-            var width = chart.width,
-                height = chart.height,
-                ctx = chart.ctx;
-
-            ctx.restore();
-            const fontSize = 20;
-            ctx.font = fontSize + "px Caladea";
-            ctx.textBaseline = "middle";
-
-            const legendWidth = 80;
-            const availableWidth = width - legendWidth;
-            const text = "TDEE";
-            const textX = Math.round((availableWidth - ctx.measureText(text).width) / 2) + legendWidth;
-            const textY = height / 2;
-
-            ctx.fillText(text, textX, textY);
-            ctx.save();
-        }
-    }
-};
-
-// TDEE Percentage 圖表
-function renderTDEEPercentage() {
-    const ctx2 = document.getElementById('tdeeAdjustmentChart').getContext('2d');
-    const tdeeAdjustmentChart = new Chart(ctx2, {
-        type: 'bar',
-        data: {
-            labels: ['Fat Loss', 'Maintenance', 'Muscle Gain'],
-            datasets: [
-                {
-                    label: '75% Possible Muscle Loss',
-                    data: [75, 0, 0],
-                    backgroundColor: '#d1d5db',
-                },
-                {
-                    label: '80% Aggressive Fat Loss',
-                    data: [80, 0, 0],
-                    backgroundColor: '#9ca3af',
-                },
-                {
-                    label: '85% Standard Fat Loss',
-                    data: [85, 0, 0],
-                    backgroundColor: '#6c757d',
-                },
-                {
-                    label: '90% Minimal Fat Loss',
-                    data: [90, 0, 0],
-                    backgroundColor: '#495057',
-                },
-                {
-                    label: '100% Maintenance',
-                    data: [0, 100, 0],
-                    backgroundColor: '#C9DABF',
-                },
-                {
-                    label: '105% Minimal Muscle Gain',
-                    data: [0, 0, 105],
-                    backgroundColor: '#A3B9CC',
-                },
-                {
-                    label: '110% Standard Muscle Gain',
-                    data: [0, 0, 110],
-                    backgroundColor: '#7B91AE',
-                },
-                {
-                    label: '115% Aggressive Muscle Gain',
-                    data: [0, 0, 115],
-                    backgroundColor: '#5A7495',
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-                padding: {
-                    top: 20,
-                    bottom: 20,
-                }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            return tooltipItem.dataset.label;
-                        }
-                    }
-                },
-                legend: {
-                    position: 'top',
-                    align: 'center',
-                    labels: {
-                        font: {
-                            size: 11,
-                            family: 'Caladea',
-                        },
-                        boxWidth: 10,
-                        padding: 10,
-                    },
-                },
-            },
-            scales: {
-                x: {
-                    stacked: true,
-                },
-                y: {
-                    beginAtZero: false,
-                    min: 70,
-                    max: 115,
-                    title: {
-                        display: true,
-                        text: 'TDEE Percentage',
-                        font: {
-                            size: 12,
-                            family: 'Caladea',
-                        },
-                    },
-                    ticks: {
-                        stepSize: 5,
-                        callback: function(value) {
-                            return value + '%';
-                        }
-                    }
-                }
-            }
-        }
-    });
 }
 
 // Body History 圖表
@@ -343,7 +141,7 @@ function updateBodyStatsChart(bodyHistory) {
                 x: {
                     title: {
                         display: true,
-                        text: 'Date'
+                        text: "Date"
                     }
                 }
             }
