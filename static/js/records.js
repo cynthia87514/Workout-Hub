@@ -1,5 +1,5 @@
 var calendarEl = document.getElementById("calendar");
-var isInitialLoad = true;
+var previousMonth = null;
 
 // 月曆初始化
 var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -13,14 +13,27 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
     eventClick: function(info) {
         const workoutId = info.event.id;
         fetchWorkoutDetail(workoutId);
+    },
+    // 監聽月份切換事件
+    datesSet: function(info) {
+        const currentMonth = getCurrentViewMonth(calendar);
+
+        // 檢查是否與之前的月份不同，避免重複請求
+        if (!previousMonth || currentMonth.year !== previousMonth.year || currentMonth.month !== previousMonth.month) {
+            loadWorkoutData(currentMonth.year, currentMonth.month);
+            previousMonth = currentMonth;  // 更新為當前加載的月份
+        }
     }
 });
 
 calendar.render();
 
-function getCurrentMonth(date) {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
+// 獲取目前日曆顯示的月份（根據 fullCalendar 的視圖）
+function getCurrentViewMonth(calendar) {
+    const view = calendar.view;
+    const start = view.currentStart;  // 視圖的起始日期
+    const year = start.getFullYear();
+    const month = start.getMonth() + 1; // getMonth() 從 0 開始，所以 +1
     return { year: year, month: month };
 }
 
@@ -171,7 +184,3 @@ function closeModal(modal) {
         modal.remove();
     }
 }
-
-const initialViewDate = calendar.getDate();
-const currentMonth = getCurrentMonth(initialViewDate);
-loadWorkoutData(currentMonth.year, currentMonth.month);

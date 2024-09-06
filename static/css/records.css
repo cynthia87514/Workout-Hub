@@ -111,6 +111,9 @@ a {
     from {opacity: 0}
     to {opacity: 1}
 }
+:root {
+    --fc-today-bg-color: rgba(168, 192, 160, 0.2);
+}
 
 /* hover 效果 */
 .fc .fc-button-primary, .custom-event {
