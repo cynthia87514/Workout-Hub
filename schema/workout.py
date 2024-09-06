@@ -15,6 +15,7 @@ class WorkoutCreate(BaseModel):
     title: str
     workout_items: List[WorkoutsItemCreate]
     is_template: Optional[bool] = False
+    created_at: Optional[datetime]
 
 class ItemSetResponse(BaseModel):
     id: int
@@ -23,7 +24,6 @@ class ItemSetResponse(BaseModel):
     reps: Optional[int]
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 class WorkoutsItemResponse(BaseModel):
@@ -32,7 +32,6 @@ class WorkoutsItemResponse(BaseModel):
     item_sets: List[ItemSetResponse] = []
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 class WorkoutResponse(BaseModel):
@@ -42,7 +41,6 @@ class WorkoutResponse(BaseModel):
     is_template: bool
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 class WorkoutDetail(BaseModel):
@@ -53,7 +51,6 @@ class WorkoutDetail(BaseModel):
     workout_items: List[WorkoutsItemResponse] = []
 
     class Config:
-        orm_mode = True
         from_attributes = True
         
 class ItemSetUpdate(BaseModel):

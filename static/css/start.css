@@ -4,7 +4,6 @@ main {
     align-items: center;
     flex: 1;
     margin-top: 20px;
-    margin-bottom: 20px;
 }
 .view, .workout, .newTemplate {
     display: flex;
@@ -263,7 +262,7 @@ hr {
     font-weight: bold;
     margin-right: 10px;
 }
-.edit-icon, .camera-icon, .template-edit-icon {
+.edit-icon, .calendar-icon, .camera-icon, .template-edit-icon {
     width: 22px;
     height: 22px;
     cursor: pointer;
@@ -284,23 +283,6 @@ hr {
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100px;
-    background-color: #27374D;
-}
-.copyright {
-    white-space: nowrap;
-    box-sizing: border-box;
-    font-size: 20px;
-    font-family: "Lato", sans-serif;
-    font-weight: 500;
-    line-height: 100px;
-    color: #CCCCCC;
 }
 dialog {
     background-color: rgba(0, 0, 0, 0.25);
@@ -675,10 +657,10 @@ dialog {
     cursor: pointer;
 }
 /* hover 效果 */
-.qS-button, .add-template, .edit-icon, .camera-icon, .template-edit-icon, .add-button, .finish, .templateAdd, .templateSave, .dialog-buttons button,.close-button, .modal-title, .exercise-item, .check-btn, .delete-btn, .add-set, .exercise-remove-btn, .filter-button, .dropdown-item, .info-button, .template-card, #placeholderCard, .more-info-button, .options-menu button, .close-menu {
+.qS-button, .add-template, .edit-icon, .calendar-icon, .camera-icon, .template-edit-icon, .add-button, .finish, .templateAdd, .templateSave, .dialog-buttons button,.close-button, .modal-title, .exercise-item, .check-btn, .delete-btn, .add-set, .exercise-remove-btn, .filter-button, .dropdown-item, .info-button, .template-card, #placeholderCard, .more-info-button, .options-menu button, .close-menu {
     transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-.qS-button:hover, .add-template:hover, .edit-icon:hover, .camera-icon:hover, .template-edit-icon:hover, .add-button:hover, .finish:hover, .templateAdd:hover, .templateSave:hover, .dialog-buttons button:hover,.close-button:hover, .modal-title:hover, .exercise-item:hover, .check-btn:hover, .delete-btn:hover, .add-set:hover, .exercise-remove-btn:hover, .filter-button:hover, .dropdown-item:hover, .info-button:hover, .template-card:hover, #placeholderCard:hover, .more-info-button:hover, .options-menu button:hover, .close-menu:hover {
+.qS-button:hover, .add-template:hover, .edit-icon:hover, .calendar-icon:hover, .camera-icon:hover, .template-edit-icon:hover, .add-button:hover, .finish:hover, .templateAdd:hover, .templateSave:hover, .dialog-buttons button:hover,.close-button:hover, .modal-title:hover, .exercise-item:hover, .check-btn:hover, .delete-btn:hover, .add-set:hover, .exercise-remove-btn:hover, .filter-button:hover, .dropdown-item:hover, .info-button:hover, .template-card:hover, #placeholderCard:hover, .more-info-button:hover, .options-menu button:hover, .close-menu:hover {
     transform: translateY(-2px);
     opacity: 0.9;
 }

@@ -26,10 +26,14 @@ def last_day_of_month(year, month):
 # 儲存 workout 資料及新增模板到資料庫
 @WorkoutRouter.post("/workout", response_model=WorkoutResponse)
 def create_workout(workout: WorkoutCreate, db: Session = Depends(get_db), redis_client = Depends(get_redis), current_user: User = Depends(get_current_user)):
+    created_at = workout.created_at if hasattr(workout, "created_at") else datetime.now(taipei_tz)
+    
     new_workout = Workouts(
         user_id=current_user.id,
         title=workout.title,
-        is_template=workout.is_template
+        is_template=workout.is_template,
+        created_at=created_at,
+        updated_at=datetime.now(taipei_tz)
     )
     db.add(new_workout)
     db.commit()
@@ -193,6 +197,8 @@ def update_template_workout(template_id: int, workout_update: WorkoutUpdate, db:
     
     if workout_update.title:
         workout.title = workout_update.title
+    
+    workout.updated_at = datetime.now(taipei_tz)
     
     existing_items = {item.id: item for item in workout.workouts_items}
     

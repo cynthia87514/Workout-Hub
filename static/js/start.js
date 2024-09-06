@@ -644,8 +644,9 @@ async function saveWorkout() {
         is_template: false
     };
 
-    await sendWorkoutData(workoutData, "POST", "/api/workout");
+    await sendWorkoutData(workoutData, "POST", "/api/workout", true);
 }
+
 // 儲存新模板到 DB
 async function saveTemplate() {
     const workoutItems = collectWorkoutItems();
@@ -657,6 +658,7 @@ async function saveTemplate() {
 
     await sendWorkoutData(templateData, "POST", "/api/workout");
 }
+
 // 編輯模板並保存到 DB
 async function editTemplate() {
     const workoutItems = collectWorkoutItems();
@@ -668,6 +670,7 @@ async function editTemplate() {
 
     await sendWorkoutData(templateData, "PUT", `/api/workout/templates/${currentTemplateId}`);
 }
+
 // 收集運動或模板項目
 function collectWorkoutItems() {
     const exercises = document.querySelectorAll(".exercise");
@@ -715,11 +718,13 @@ function collectWorkoutItems() {
     return workoutItems;
 }
 // 通用的 API 請求發送函數
-async function sendWorkoutData(data, method, url) {
+async function sendWorkoutData(data, method, url, isNewWorkout = false) {
     const token = localStorage.getItem("token");
 
-    // 打印发送的数据格式
-    console.log("Sending data:", JSON.stringify(data, null, 2));
+    // 只有在新增運動紀錄時需要處理 created_at
+    if (isNewWorkout) {
+        data.created_at = getCreatedAt(true);  // 根據是否選擇日期來決定 created_at
+    }
 
     try {
         const response = await fetch(url, {
@@ -739,14 +744,16 @@ async function sendWorkoutData(data, method, url) {
         await response.json();
 
         if (data.is_template) {
-            await fetchMyTemplates();
+            await fetchMyTemplates();  // 如果是模板，刷新模板列表
         }
-        resetWorkoutSection();
+
+        resetWorkoutSection();  // 重置運動表單或模板區域
 
     } catch (error) {
         console.error("Error:", error.message);
     }
 }
+
 // 清空 workout section
 function resetWorkoutSection() {
     const exercises = document.querySelectorAll(".exercise");
@@ -1021,7 +1028,7 @@ const templateTopicContainer = document.querySelector(".template-topic-container
 const topic = topicContainer.querySelector(".topic");
 const topicInput = topicContainer.querySelector(".topic-input");
 const editIcon = topicContainer.querySelector(".edit-icon");
-const cameraIcon = topicContainer.querySelector(".camera-icon");
+// const cameraIcon = topicContainer.querySelector(".camera-icon");
 const templateTopic = templateTopicContainer.querySelector(".templateTopic");
 const templateTopicInput = templateTopicContainer.querySelector(".templateTopic-input");
 const templateEditIcon = templateTopicContainer.querySelector(".template-edit-icon");
@@ -1069,3 +1076,65 @@ templateTopicInput.addEventListener("keypress", (e) => {
         templateTopicInput.blur();
     }
 });
+
+// 選擇日曆圖標和日期選擇器
+const calendarIcon = document.getElementById("calendarIcon");
+const datePicker = document.getElementById("datePicker");
+
+// 點擊日曆圖標時顯示或隱藏日期選擇器
+calendarIcon.addEventListener("click", (event) => {
+    event.stopPropagation();  // 防止事件冒泡
+    toggleDatePicker();
+});
+
+// 選擇日期時更新標題中的日期
+datePicker.addEventListener("change", () => {
+    const selectedDate = new Date(datePicker.value);  // 獲取選擇的日期
+    const formattedDate = `${selectedDate.getMonth() + 1}/${selectedDate.getDate()}`;  // 格式化日期
+
+    // 更新 Workout 標題
+    topic.textContent = `${formattedDate} Workout`;
+    topicInput.value = `${formattedDate} Workout`;
+
+    // 隱藏日期選擇器
+    hideDatePicker();
+});
+
+// 全局點擊事件，用來隱藏日期選擇器
+document.addEventListener("click", (event) => {
+    if (event.target !== calendarIcon && event.target !== datePicker) {
+        hideDatePicker();
+    }
+});
+
+// 顯示或隱藏日期選擇器的函數
+function toggleDatePicker() {
+    if (datePicker.classList.contains("hide")) {
+        datePicker.classList.remove("hide");  // 顯示日期選擇器
+        datePicker.focus();  // 自動彈出日期選擇器
+    } else {
+        datePicker.classList.add("hide");  // 隱藏日期選擇器
+    }
+}
+
+// 隱藏日期選擇器的函數
+function hideDatePicker() {
+    datePicker.classList.add("hide");
+}
+
+// 獲取 created_at 的值，結合選擇的日期和當前時間，或者當前時間
+function getCreatedAt(useSelectedDate = false) {
+    const now = new Date();  // 當前時間
+
+    if (useSelectedDate && datePicker.value) {
+        const selectedDate = new Date(datePicker.value);  // 使用選擇的日期
+        // 將選擇的日期和當前時間結合
+        selectedDate.setHours(now.getHours());
+        selectedDate.setMinutes(now.getMinutes());
+        selectedDate.setSeconds(now.getSeconds());
+
+        return selectedDate.toISOString();  // 返回 ISO 格式時間
+    }
+
+    return now.toISOString();  // 返回當前時間的 ISO 格式
+}

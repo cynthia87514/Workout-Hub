@@ -19,8 +19,14 @@
                     <div class="start hide">Start</div>
                     <div class="records hide">Records</div>
                     <div class="diet hide">Diet</div>
-                    <div class="profile hide">Profile</div>
-                    <div class="logout hide">Log Out</div>
+                    <div class="dropdownBox hide">
+                        <img src="/static/images/user.png" class="avatar-icon rounded-circle" alt="User Avatar" id="avatarDropdown">
+                        <div class="dropdown-content" id="dropdownContent">
+                            <div class="profile">Profile</div>
+                            <div class="bodyInfo">Body Info</div>
+                            <div class="logout">Log Out</div>
+                        </div>
+                    </div>
                     <div class="login">Log in</div>
                 </div>
             </div>
@@ -97,7 +103,9 @@
                 <input type="text" class="topic-input hide" value="">
                 <div class="topic"></div>
                 <img src="/static/images/pencil.png" class="edit-icon" alt="edit">
-                <img src="/static/images/camera.png" class="camera-icon" alt="camera">
+                <img src="/static/images/calendar.png" class="calendar-icon" alt="calendar" id="calendarIcon">
+                <input type="date" id="datePicker" class="hide"/>
+                <!-- <img src="/static/images/camera.png" class="camera-icon" alt="camera"> -->
             </div>
             <button class="add-button">Add Exercises</button>
             <button class="finish">Finish Workout</button>
