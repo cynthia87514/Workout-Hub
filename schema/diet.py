@@ -15,10 +15,10 @@ class DietResponse(DietBase):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class DietListResponse(BaseModel):
     diets: List[DietResponse]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
