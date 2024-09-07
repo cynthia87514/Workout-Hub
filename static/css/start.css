@@ -18,7 +18,7 @@ main {
 }
 .workout, .newTemplate {
     background-color: #E8F0F8;
-    border: #27374D solid 2px;
+    border: #2C3E50 solid 2px;
 }
 .hide {
     display: none;
@@ -26,7 +26,7 @@ main {
 .title {
     font-size: 36px;
     font-weight: 700;
-    color: #27374D;
+    color: #2C3E50;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 .quickStart {
@@ -41,7 +41,7 @@ main {
     margin-top: 20px;
     padding: 20px;
     background-color: #E8F0F8;
-    border: #27374D solid 2px;
+    border: #2C3E50 solid 2px;
     border-radius: 10px;
 }
 .templates {
@@ -55,7 +55,7 @@ main {
     margin-top: 20px;
     padding: 20px;
     background-color: #E8F0F8;
-    border: #27374D solid 2px;
+    border: #2C3E50 solid 2px;
     border-radius: 10px;
 }
 .templates-up {
@@ -80,10 +80,11 @@ hr {
     height: 1.8px;
     margin-top: 20px;
     margin-bottom: 30px;
-    background-color: #27374D;
+    background-color: #2C3E50;
     border: none;
 }
 .qS-text, .t-text {
+    color: #2C3E50;
     font-size: 30px;
     font-weight: 700;
 }
@@ -111,6 +112,7 @@ hr {
     height: 100%;
 }
 .mT-text, .eT-text {
+    color: #2C3E50;
     margin-top: 0px;
     margin-bottom: 10px;
     font-size: 28px;
@@ -155,7 +157,7 @@ hr {
     margin-bottom: 10px;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #27374D;
+    color: #2C3E50;
 }
 .more-info-button {
     position: absolute;

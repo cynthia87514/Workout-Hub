@@ -25,7 +25,7 @@ a {
 .fc-toolbar-title {
     font-size: 24px;
     font-weight: 700;
-    color: #343a40;
+    color: #2C3E50;
 }
 .fc-event {
     border-radius: 4px;
@@ -115,10 +115,10 @@ a {
 }
 
 /* hover 效果 */
-.fc .fc-button-primary, .custom-event {
+.fc .fc-button-primary, .custom-event, .remove-btn, .close-button {
     transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-.fc .fc-button-primary:hover, .custom-event:hover {
+.fc .fc-button-primary:hover, .custom-event:hover, .remove-btn:hover, .close-button:hover {
     transform: translateY(-2px);
     opacity: 0.9;
 }
