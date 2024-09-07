@@ -72,14 +72,8 @@ function renderUnauthPage() {
 function logoutUser() {
     localStorage.removeItem("token");
     sessionStorage.removeItem("recentLogin");
-    // 清除全局變量中的使用者資訊
     currentUserInfo = null;
-
-    if (window.location.pathname === "/") {
-        window.location.reload();
-    } else {
-        window.location.href = "/";
-    }
+    window.location.href = "/";
 }
 // Dialog 相關功能
 function openModal(modalId) {
@@ -130,7 +124,7 @@ function validateSignupForm() {
     }
 
     if (!validatePassword(password)) {
-        alert("Password must be at least 8 characters long and include at least one number, one uppercase letter, and one lowercase letter.");
+        showToast("Password must be at least 8 characters long and include at least 1 number, 1 uppercase letter, and 1 lowercase letter.", false);
         return false;
     }
 
@@ -144,6 +138,8 @@ async function registerUser(event) {
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
 
+    data.login_method = "password";
+
     try {
         const response = await fetch("/api/user/auth", {
             method: "POST",
@@ -155,9 +151,10 @@ async function registerUser(event) {
 
         if (!response.ok) {
             const errorData = await response.json();
-            alert("Registration failed: " + errorData.detail);
+            console.error("Registration failed:", errorData);
+            alert("Registration failed: " + (errorData.detail || JSON.stringify(errorData)));
         } else {
-            alert("Registration successful");
+            showToast("Registration successful!", true);
             switchModal("loginDialog");
         }
     } catch (error) {
@@ -181,7 +178,8 @@ async function loginUser(event) {
 
         if (!response.ok) {
             const errorData = await response.json();
-            alert("Login failed: " + errorData.detail);
+            console.error("Login failed:", errorData);
+            alert("Login failed: " + (errorData.detail || JSON.stringify(errorData)));
         } else {
             const result = await response.json();
             localStorage.setItem("token", result.access_token);
@@ -194,6 +192,27 @@ async function loginUser(event) {
     }
 }
 
+// 顯示提示消息
+function showToast(message, success = true) {
+    let toast = document.getElementById("toast");
+    if (!toast) {
+        createToastElement();
+        toast = document.getElementById("toast");
+    }
+    toast.textContent = message;
+    toast.style.backgroundColor = success ? "#28a745" : "#dc3545";
+    toast.className = "toast show";
+    setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+    }, 10000);
+}
+
+function createToastElement() {
+    const toast = document.createElement("div");
+    toast.id = "toast";
+    toast.className = "toast";
+    document.body.appendChild(toast);
+}
 // 主邏輯和事件監聽
 // 檢查使用者登入狀態
 document.addEventListener("DOMContentLoaded", async function() {

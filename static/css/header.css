@@ -19,7 +19,7 @@ header {
     justify-content: center;
     width: 100%;
     height: 54px;
-    background-color: #27374D;
+    background-color: rgba(15, 30, 60, 0.9);
 }
 .nav-bar {
     box-sizing: border-box;
@@ -38,6 +38,7 @@ header {
     line-height: 36px;
     color: #FFFFFF;
     cursor: pointer;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
 }
 .right .menu {
     box-sizing: border-box;
@@ -52,6 +53,10 @@ header {
     font-weight: 700;
     color: #FFFFFF;
     cursor: pointer;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
+}
+.profile, .bodyInfo, .logout {
+    text-shadow: 0 0 black !important;
 }
 .dropdownBox {
     position: relative;
@@ -185,7 +190,7 @@ header {
 }
 .divider::before,
 .divider::after {
-    content: '';
+    content: "";
     flex: 1;
     border-bottom: 1px solid #ccc;
 }
@@ -243,6 +248,29 @@ footer {
     font-weight: 500;
     line-height: 100px;
     color: #CCCCCC;
+}
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 100000;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+    opacity: 0.9;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-weight: bold;
+    transform: translateX(-50%);
+}
+.toast.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
 }
 
 /* 垂直滾動條樣式 */
