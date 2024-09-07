@@ -32,3 +32,33 @@ function handleCredentialResponse(response) {
         console.error("Error logging in with Google:", error);
     });
 }
+
+window.addEventListener("scroll", function() {
+    const header = document.querySelector("header");
+    if (window.scrollY > 0) {
+        header.classList.add("solid-header");
+        header.classList.remove("transparent-header");
+    } else {
+        header.classList.add("transparent-header");
+        header.classList.remove("solid-header");
+    }
+});
+
+// 自動播放及暫停的 IntersectionObserver
+const videos = document.querySelectorAll("video");
+        
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.play();
+        } else {
+            entry.target.pause();
+        }
+    });
+}, {
+    threshold: 0.5
+});
+
+videos.forEach(video => {
+    observer.observe(video);
+});
