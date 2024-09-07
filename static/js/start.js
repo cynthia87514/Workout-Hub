@@ -493,7 +493,7 @@ function addSetRow(button) {
         <div class="table-row">
             <div class="cell">${newRowNumber}</div>
             <div class="cell">—</div>
-            <div class="cell"><input type="number" placeholder="kg" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
+            <div class="cell"><input type="number" placeholder="kg" step="0.01" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
             <div class="cell"><input type="number" value="0" class="repsInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
             <div class="cell"><img src="/static/images/check.png" class="check-btn" alt="check"></div>
             <div class="cell"><img src="/static/images/delete.png" class="delete-btn" alt="delete"></div>
@@ -602,7 +602,7 @@ function addExercise(insertBeforeElement) {
                     <div class="table-row">
                         <div class="cell">1</div>
                         <div class="cell">—</div>
-                        <div class="cell"><input type="number" placeholder="kg" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
+                        <div class="cell"><input type="number" placeholder="kg" step="0.01" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
                         <div class="cell"><input type="number" value="10" class="repsInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
                         <div class="cell"><img src="/static/images/check.png" class="check-btn" alt="check"></div>
                         <div class="cell"><img src="/static/images/delete.png" class="delete-btn" alt="delete"></div>
@@ -610,7 +610,7 @@ function addExercise(insertBeforeElement) {
                     <div class="table-row">
                         <div class="cell">2</div>
                         <div class="cell">—</div>
-                        <div class="cell"><input type="number" placeholder="kg" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
+                        <div class="cell"><input type="number" placeholder="kg" step="0.01" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
                         <div class="cell"><input type="number" value="10" class="repsInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
                         <div class="cell"><img src="/static/images/check.png" class="check-btn" alt="check"></div>
                         <div class="cell"><img src="/static/images/delete.png" class="delete-btn" alt="delete"></div>
@@ -793,7 +793,7 @@ function initializeTemplateWorkout(exerciseName) {
                 <div class="table-row">
                     <div class="cell">1</div>
                     <div class="cell">—</div>
-                    <div class="cell"><input type="number" placeholder="kg" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
+                    <div class="cell"><input type="number" placeholder="kg" step="0.01" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
                     <div class="cell"><input type="number" value="10" class="repsInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
                     <div class="cell"><img src="/static/images/check.png" class="check-btn" alt="check"></div>
                     <div class="cell"><img src="/static/images/delete.png" class="delete-btn" alt="delete"></div>
@@ -801,7 +801,7 @@ function initializeTemplateWorkout(exerciseName) {
                 <div class="table-row">
                     <div class="cell">2</div>
                     <div class="cell">—</div>
-                    <div class="cell"><input type="number" placeholder="kg" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
+                    <div class="cell"><input type="number" placeholder="kg" step="0.01" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
                     <div class="cell"><input type="number" value="10" class="repsInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
                     <div class="cell"><img src="/static/images/check.png" class="check-btn" alt="check"></div>
                     <div class="cell"><img src="/static/images/delete.png" class="delete-btn" alt="delete"></div>
@@ -809,7 +809,7 @@ function initializeTemplateWorkout(exerciseName) {
                 <div class="table-row">
                     <div class="cell">3</div>
                     <div class="cell">—</div>
-                    <div class="cell"><input type="number" placeholder="kg" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
+                    <div class="cell"><input type="number" placeholder="kg" step="0.01" class="kgInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
                     <div class="cell"><input type="number" value="10" class="repsInput" min="0" oninput="this.setCustomValidity(''); if (!this.validity.valid) { this.value = ''; }"></div>
                     <div class="cell"><img src="/static/images/check.png" class="check-btn" alt="check"></div>
                     <div class="cell"><img src="/static/images/delete.png" class="delete-btn" alt="delete"></div>
@@ -843,7 +843,7 @@ function insertExerciseSets(exerciseTable, sets) {
             <div class="table-row">
                 <div class="cell">${index + 1}</div>
                 <div class="cell">—</div>
-                <div class="cell"><input type="number" placeholder="kg" class="kgInput" value="${set.weight || ''}" min="0"></div>
+                <div class="cell"><input type="number" placeholder="kg" step="0.01" class="kgInput" value="${set.weight || ''}" min="0"></div>
                 <div class="cell"><input type="number" value="${set.reps || 10}" class="repsInput" min="0"></div>
                 <div class="cell"><img src="/static/images/check.png" class="check-btn" alt="check"></div>
                 <div class="cell"><img src="/static/images/delete.png" class="delete-btn" alt="delete"></div>
@@ -874,7 +874,7 @@ function addTemplateExercise(exerciseName, itemSets, itemId) {
                     <div class="table-row">
                         <div class="cell">${index + 1}</div>
                         <div class="cell">—</div>
-                        <div class="cell"><input type="number" value="${set.weight || ''}" placeholder="kg" class="kgInput" min="0"></div>
+                        <div class="cell"><input type="number" value="${set.weight || ''}" placeholder="kg" step="0.01" class="kgInput" min="0"></div>
                         <div class="cell"><input type="number" value="${set.reps || ''}" placeholder="reps" class="repsInput" min="0"></div>
                         <div class="cell"><img src="/static/images/check.png" class="check-btn" alt="check"></div>
                         <div class="cell"><img src="/static/images/delete.png" class="delete-btn" alt="delete"></div>
