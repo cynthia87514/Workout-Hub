@@ -13,9 +13,9 @@ class UserBase(BaseModel):
     username: str
 
 class UserCreate(UserBase):
-    password: Optional[str] = None
-    login_method: str
+    password: Optional[str]
     profile_image_url: Optional[str] = None
+    login_method: str
 
 class UserInDB(UserBase):
     id: int

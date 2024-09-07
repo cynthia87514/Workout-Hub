@@ -6,7 +6,7 @@ from dbconfig import get_db
 from redisconfig import get_redis
 from schema.user import UserCreate, UserInDB, Token, UserLogin, UserInResponse, AuthResponse, GoogleLoginRequest
 from service.crud import create_user, authenticate_user
-from service.auth import create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_remaining_time, oauth2_scheme, google_login
+from service.auth import create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_remaining_time, oauth2_scheme, get_user_by_email, verify_google_token
 import json
 import requests
 import os
@@ -48,7 +48,33 @@ def login_for_access_token(user_login: UserLogin, db: Session = Depends(get_db))
 # Google 登入的 API 路徑
 @UserRouter.post("/auth/google", response_model=Token)
 def login_with_google(request: GoogleLoginRequest, db: Session = Depends(get_db)):
-    return google_login(request.token, db)
+    google_user_info = verify_google_token(request.token)
+    email = google_user_info["email"]
+    username = google_user_info.get("name", email.split("@")[0])
+    profile_image_url = google_user_info.get("picture")
+
+    # 查找或創建新使用者
+    user = get_user_by_email(db, email=email)
+    if user:
+        if user.login_method == "password":
+            raise HTTPException(
+                status_code=400, 
+                detail="This email is already registered with a password. Please login using your password or link your Google account in your profile settings."
+            )
+    else:
+        user_data = UserCreate(
+            username=username, 
+            email=email, 
+            password=None,
+            profile_image_url=profile_image_url,
+            login_method="google"
+        )
+        create_user(db, user_data)
+        user = get_user_by_email(db, email=email)
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
+    return {"access_token": access_token, "token_type": "bearer"}
 
 # Google OAuth callback route
 @UserRouter.get("/auth/google/callback")
@@ -57,7 +83,6 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
     if not code:
         return {"error": "Code not found"}
     
-    # Exchange the code for an access token
     token_url = "https://oauth2.googleapis.com/token"
     payload = {
         "code": code,

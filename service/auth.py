@@ -6,8 +6,7 @@ from sqlalchemy.orm import Session
 import os
 from dotenv import load_dotenv
 
-from schema.user import UserCreate
-from service.crud import get_user_by_email, create_user
+from service.crud import get_user_by_email
 from dbconfig import get_db
 from google.auth.transport.requests import Request
 from google.oauth2 import id_token
@@ -92,34 +91,3 @@ def verify_google_token(token: str):
         return idinfo
     except ValueError as e:
         raise HTTPException(status_code=400, detail="Invalid Google token")
-    
-# Google OAuth 登入處理
-def google_login(token: str, db: Session = Depends(get_db)):
-    google_user_info = verify_google_token(token)
-    email = google_user_info["email"]
-    username = google_user_info.get("name", email.split("@")[0])
-    profile_image_url = google_user_info.get("picture")
-
-    # 查找或創建新使用者
-    user = get_user_by_email(db, email=email)
-    if user:
-        if user.login_method == "password":
-            raise HTTPException(
-                status_code=400, 
-                detail="This email is already registered with a password. Please login using your password or link your Google account in your profile settings."
-            )
-    else:
-        user_data = UserCreate(
-            username=username, 
-            email=email, 
-            password=None, 
-            profile_image_url=profile_image_url,
-            login_method="google"
-        )
-        create_user(db, user_data)
-        user = get_user_by_email(db, email=email)
-
-    # 生成 JWT token 並返回
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
-    return {"access_token": access_token, "token_type": "bearer"}
