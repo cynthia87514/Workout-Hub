@@ -43,7 +43,7 @@ const caloriesLeftChart = new Chart(ctxLeft, {
 
 // Macros Intake Today 圖表初始化
 const caloriesIntakeChart = new Chart(ctxIntake, {
-    type: "doughnut",
+    type: "pie",
     data: {
         labels: ["Protein", "Carbs", "Fats"],
         datasets: [{
@@ -54,7 +54,6 @@ const caloriesIntakeChart = new Chart(ctxIntake, {
         }]
     },
     options: {
-        cutout: "70%",
         responsive: true
     }            
 });
