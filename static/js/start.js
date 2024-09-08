@@ -37,8 +37,8 @@ const dialogCategory = document.getElementById("dialogCategory");
 fetchMyTemplates();
 bindExampleTemplateEvents();
 fetchExercises();
-generateDropdownItems(); // 生成下拉選單項
-toggleModalTitleButtonState(); // 初始化按鈕狀態
+generateDropdownItems();
+toggleModalTitleButtonState();
 
 // 定義函數
 // 從後端獲取 My Templates
@@ -554,13 +554,13 @@ function updateCheckButtons() {
                         checkBtn.style.backgroundColor = "limegreen";
                         checkBtn.style.color = "white";
                         row.style.backgroundColor = "lightgreen";
-                        row.classList.remove("shake"); // 移除晃動效果
+                        row.classList.remove("shake");
                     } else {
                         checkBtn.style.backgroundColor = "crimson";
                         checkBtn.style.color = "white";
                         row.style.backgroundColor = "lightcoral";
-                        row.classList.add("shake"); // 添加晃動效果
-                        setTimeout(() => row.classList.remove("shake"), 500); // 確保晃動效果只持續短暫時間
+                        row.classList.add("shake");
+                        setTimeout(() => row.classList.remove("shake"), 500);
                     }
                 });
 
@@ -655,8 +655,7 @@ async function saveTemplate() {
         workout_items: workoutItems,
         is_template: true
     };
-
-    await sendWorkoutData(templateData, "POST", "/api/workout");
+    await sendWorkoutData(templateData, "POST", "/api/workout", true);
 }
 
 // 編輯模板並保存到 DB
@@ -693,9 +692,9 @@ function collectWorkoutItems() {
             };
             
             if (includeId && setId) {
-                setItem.id = parseInt(setId);  // 确保 `id` 仅在编辑时包含
+                setItem.id = parseInt(setId);
             } else {
-                setItem.id = null;  // 如果没有 `id`，明确设置为 `null`
+                setItem.id = null;
             }
             
             sets.push(setItem);
@@ -707,9 +706,9 @@ function collectWorkoutItems() {
             item_sets: sets
         };
         if (includeId && itemId) {
-            workoutItem.id = parseInt(itemId);  // 仅在编辑时包含 id
+            workoutItem.id = parseInt(itemId);
         } else {
-            workoutItem.id = null;  // 如果没有 `id`，明确设置为 `null`
+            workoutItem.id = null;
         }
 
         workoutItems.push(workoutItem);
@@ -723,7 +722,7 @@ async function sendWorkoutData(data, method, url, isNewWorkout = false) {
 
     // 只有在新增運動紀錄時需要處理 created_at
     if (isNewWorkout) {
-        data.created_at = getCreatedAt(true);  // 根據是否選擇日期來決定 created_at
+        data.created_at = getCreatedAt(true);
     }
 
     try {
@@ -744,10 +743,10 @@ async function sendWorkoutData(data, method, url, isNewWorkout = false) {
         await response.json();
 
         if (data.is_template) {
-            await fetchMyTemplates();  // 如果是模板，刷新模板列表
+            await fetchMyTemplates();
         }
 
-        resetWorkoutSection();  // 重置運動表單或模板區域
+        resetWorkoutSection();
 
     } catch (error) {
         console.error("Error:", error.message);
@@ -923,12 +922,12 @@ function clickExampleTemplate(templateName) {
     topicInput.value = newTopic;
 
     // 找到所有 .exampleTemplates 下的 .template-card
-    const templateCards = document.querySelectorAll('.exampleTemplates .template-card');
+    const templateCards = document.querySelectorAll(".exampleTemplates .template-card");
     let templateCard = null;
 
     // 遍歷每個 card，找到 title 與 templateName 匹配的卡片
     templateCards.forEach(card => {
-        const titleElement = card.querySelector('.template-title');
+        const titleElement = card.querySelector(".template-title");
         if (titleElement && titleElement.textContent.trim() === templateName) {
             templateCard = card;
         }
@@ -1089,8 +1088,8 @@ calendarIcon.addEventListener("click", (event) => {
 
 // 選擇日期時更新標題中的日期
 datePicker.addEventListener("change", () => {
-    const selectedDate = new Date(datePicker.value);  // 獲取選擇的日期
-    const formattedDate = `${selectedDate.getMonth() + 1}/${selectedDate.getDate()}`;  // 格式化日期
+    const selectedDate = new Date(datePicker.value);
+    const formattedDate = `${selectedDate.getMonth() + 1}/${selectedDate.getDate()}`;
 
     // 更新 Workout 標題
     topic.textContent = `${formattedDate} Workout`;
@@ -1110,10 +1109,10 @@ document.addEventListener("click", (event) => {
 // 顯示或隱藏日期選擇器的函數
 function toggleDatePicker() {
     if (datePicker.classList.contains("hide")) {
-        datePicker.classList.remove("hide");  // 顯示日期選擇器
-        datePicker.focus();  // 自動彈出日期選擇器
+        datePicker.classList.remove("hide");
+        datePicker.focus();
     } else {
-        datePicker.classList.add("hide");  // 隱藏日期選擇器
+        datePicker.classList.add("hide");
     }
 }
 
@@ -1124,17 +1123,17 @@ function hideDatePicker() {
 
 // 獲取 created_at 的值，結合選擇的日期和當前時間，或者當前時間
 function getCreatedAt(useSelectedDate = false) {
-    const now = new Date();  // 當前時間
+    const now = new Date();
 
     if (useSelectedDate && datePicker.value) {
-        const selectedDate = new Date(datePicker.value);  // 使用選擇的日期
+        const selectedDate = new Date(datePicker.value);
         // 將選擇的日期和當前時間結合
         selectedDate.setHours(now.getHours());
         selectedDate.setMinutes(now.getMinutes());
         selectedDate.setSeconds(now.getSeconds());
 
-        return selectedDate.toISOString();  // 返回 ISO 格式時間
+        return selectedDate.toISOString();
     }
 
-    return now.toISOString();  // 返回當前時間的 ISO 格式
+    return now.toISOString();
 }
