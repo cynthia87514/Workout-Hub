@@ -118,7 +118,6 @@ function showWorkoutDetailModal(workout) {
         <div class="modal-content">
             <img src="/static/images/remove.png" class="remove-btn" alt="remove">
             <h2>${workout.title}</h2>
-            <p>${formattedDate}</p>
             <ul>
                 ${workout.workout_items.map(item => `
                     <li>
