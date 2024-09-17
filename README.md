@@ -1,4 +1,4 @@
-# Workout Hub
+# [Workout Hub](https://workouthub.site/)
 
 ### A platform for tracking workouts, managing nutrition, and reaching your fitness goals.
 
@@ -69,6 +69,6 @@
 ---
 
 ### Contact
-<img src="/static/images/account.png" width="20"/> **許珮萱 Pei Hsuan Hsu**  
-<img src="/static/images/email.png" width="20"/> Email: [hsupei0514@gmail.com](mailto:hsupei0514@gmail.com)
-<img src="/static/images/linkedin.png" width="20"/> LinkedIn: [Pei Hsuan Hsu](https://www.linkedin.com/in/pei-hsuan-hsu-0841a52bb/)
+<img src="/static/images/account.png" width="15"/> **許珮萱 Pei Hsuan Hsu**  
+<img src="/static/images/email.png" width="15"/> Email: [hsupei0514@gmail.com](mailto:hsupei0514@gmail.com)  
+<img src="/static/images/linkedin.png" width="15"/> LinkedIn: [Pei Hsuan Hsu](https://www.linkedin.com/in/pei-hsuan-hsu-0841a52bb/)
