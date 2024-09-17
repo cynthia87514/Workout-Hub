@@ -1,31 +1,74 @@
 # Workout Hub
 
-### 提供運動紀錄服務，輕鬆追蹤運動進度及身體組成變化
+### A platform for tracking workouts, managing nutrition, and reaching your fitness goals.
 
-### 目錄
+### Table of contents
 
-- [主要功能](#主要功能)
-- [系統架構](#系統架構)
-- [資料庫架構](#資料庫架構)
-- [使用技術](#使用技術)
-- [聯絡資訊](#聯絡資訊)
-
----
-
-### 主要功能
+- [Main Features](#main-features)
+- [Demo](#demo)
+- [Server Architecture](#server-architecture)
+- [Database Schema](#database-schema)
+- [Technique](#technique)
+- [Contact](#contact)
 
 ---
 
-### 系統架構
+### Main Features
+
+- Member system
+- Record weight training program
+- View workout history
+- Analyze and track body composition
+- Provide diet control recommendations
 
 ---
 
-### 資料庫架構
+### Demo
+
+- Member system: Login by creating an account or with Google.
+![Login Demo](./static/gif/login.gif)
+
+- Record weight training program: Easily begin workout by starting an empty workout or using templates.
+![Start Demo](./static/gif/start.gif)
+
+- View workout history: Monitor progress with detailed workout records stored in personal calendar.
+![Records Demo](./static/gif/records.gif)
+
+- Analyze and track body composition: Keep an eye on body fat, BMR, TDEE, and other important health indicators.
+![Bodyinfo Demo](./static/gif/bodyinfo.gif)
+
+- Provide diet control recommendations: Track daily calories and macronutrient intake to meet fitness goals.
+![Diet Demo](./static/gif/diet.gif)
 
 ---
 
-### 使用技術
+### Server Architecture
+![architecture](./static/images/architecture.png)
 
 ---
 
-### 聯絡資訊
+### Database Schema
+![database](./static/images/database-ERD.png)
+
+---
+
+### Technique
+
+- Front-End
+    - HTML, CSS, JavaScript, Bootstrap
+- Back-End
+    - Web Framework : Python FastAPI
+    - Database : MySQL
+    - Cache : Redis
+    - Container : Docker
+    - Reverse Proxy : Nginx
+    - Cloud : AWS RDS, S3, CloudFront, Route 53
+    - Third-Party : Google Login
+    - Design Pattern : MVC
+
+---
+
+### Contact
+<img src="/static/images/account.png" width="20"/> **許珮萱 Pei Hsuan Hsu**  
+<img src="/static/images/email.png" width="20"/> Email: [hsupei0514@gmail.com](mailto:hsupei0514@gmail.com)
+<img src="/static/images/linkedin.png" width="20"/> LinkedIn: [Pei Hsuan Hsu](https://www.linkedin.com/in/pei-hsuan-hsu-0841a52bb/)
