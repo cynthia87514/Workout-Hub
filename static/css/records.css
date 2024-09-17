@@ -1,0 +1,133 @@
+.mt-4 {
+    margin-top: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#calendar {
+    box-sizing: border-box;
+    max-width: 1200px;
+    width: 100%;
+    height: calc(100vh - 74px);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+}
+a {
+    color: #96B6C5;
+    text-decoration: none;
+}
+.fc-col-header-cell-cushion {
+    color: #b12b24;
+}
+.fc-toolbar-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2C3E50;
+}
+.fc-event {
+    border-radius: 4px;
+    margin: 10px;
+}
+.fc .fc-button-primary:focus {
+    box-shadow: none;
+}
+.fc .fc-button:focus {
+    box-shadow: none;
+}
+.custom-event {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 97%;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+    font-weight: bold;
+    color: #FFFFFF;
+    background-color: #96B6C5;
+    border-color: #96B6C5;
+    cursor: pointer;
+}
+.fc .fc-daygrid-more-link {
+    font-size: 16px;
+    font-weight: 700;
+}
+.fc-popover-title {
+    font-weight: 700;
+}
+.modal {
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+.modal > div {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    animation-name: modalopen;
+    animation-duration: 0.4s;
+}
+.modal button {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    padding: 1px 6px;
+    font-size: 14px;
+    border: 1px solid black;
+    background-color: #F0F0F0;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.modal button:hover {
+    background-color: #dcdcdc;
+}
+.remove-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+}
+@keyframes modalopen {
+    from {opacity: 0}
+    to {opacity: 1}
+}
+:root {
+    --fc-today-bg-color: rgba(168, 192, 160, 0.2);
+}
+
+/* hover 效果 */
+.fc .fc-button-primary, .custom-event, .remove-btn, .close-button {
+    transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+.fc .fc-button-primary:hover, .custom-event:hover, .remove-btn:hover, .close-button:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+.custom-event:hover {
+    background-color: #526D82;
+}
+
+@media (min-width: 1285px) {
+    #calendar {
+        max-width: 1140px;
+    }
+}

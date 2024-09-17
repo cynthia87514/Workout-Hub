@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Hub</title>
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/diet.css"/>
+    <script src="/static/js/header.js" defer></script>
+    <script src="/static/js/diet.js" defer></script>
+</head>
+<body>
+    <header>
+        <nav class="nav-bar">
+            <div class="left">Workout Hub</div>
+            <div class="right">
+                <div class="menu">
+                    <div class="start hide">Start</div>
+                    <div class="records hide">Records</div>
+                    <div class="diet hide">Diet</div>
+                    <div class="dropdownBox hide">
+                        <img src="/static/images/user.png" class="avatar-icon rounded-circle" alt="User Avatar" width="40" height="40" id="avatarDropdown">
+                        <div class="dropdown-content" id="dropdownContent">
+                            <div class="profile">Profile</div>
+                            <div class="bodyInfo">Body Info</div>
+                            <div class="logout">Log Out</div>
+                        </div>
+                    </div>
+                    <div class="login">Log in</div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Your BMR</h5>
+                        <p id="bmr-value-up" class="card-text">Please go to Body Info page,</p>
+                        <p id="bmr-value-down" class="card-text">enter your body information to get BMR</p>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Your TDEE</h5>
+                        <p id="tdee-value-up" class="card-text">Please go to Body Info page,</p>
+                        <p id="tdee-value-down" class="card-text">enter your body information to get tdee</p>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Select Your Goal</h5>
+                        <select id="goal-select" class="form-select">
+                            <option value="aggressive-fat-loss">Aggressive Fat Loss</option>
+                            <option value="standard-fat-loss">Standard Fat Loss</option>
+                            <option value="minimal-fat-loss">Minimal Fat Loss</option>
+                            <option value="maintenance" selected>Maintain Weight</option>
+                            <option value="minimal-muscle-gain">Minimal Muscle Gain</option>
+                            <option value="standard-muscle-gain">Standard Muscle Gain</option>
+                            <option value="aggressive-muscle-gain">Aggressive Muscle Gain</option>
+                        </select>
+                        <div class="mt-4">
+                            <h5 class="card-title">Calories to Consume</h5>
+                            <p id="calories-allowed" class="card-text">
+                                TDEE X <span style="color: #b12b24;" id="multiple">1.0</span> = <span style="color: #b12b24;" id="number">? kcal</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Calories Left Today</h5>
+                        <canvas id="calories-chart-left" width="200" height="200"></canvas>
+                        <p id="calories-left" class="mt-4">? kcal</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Macros Intake Today</h5>
+                        <canvas id="calories-chart-intake" width="200" height="200"></canvas>
+                        <p id="calories-intake" class="mt-4">? kcal</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-1">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Log Your Intake</h5>
+                        <form id="intake-form">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="food-input" class="form-label">Food Name</label>
+                                        <input type="text" class="form-control" id="food-input" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="quantity-input" class="form-label">Quantity (g)</label>
+                                        <input type="number" class="form-control" id="quantity-input" step="0.01" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="calories-input" class="form-label">Calories (kcal)</label>
+                                        <input type="number" class="form-control" id="calories-input" step="0.01" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="protein-input" class="form-label">Protein (g)</label>
+                                        <input type="number" class="form-control" id="protein-input" step="0.01" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="carbs-input" class="form-label">Carbs (g)</label>
+                                        <input type="number" class="form-control" id="carbs-input" step="0.01" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="fats-input" class="form-label">Fats (g)</label>
+                                        <input type="number" class="form-control" id="fats-input" step="0.01" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 offset-md-8 text-end">
+                                    <button type="submit" class="btn btn-primary w-50" id="logIntake">Log Intake</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Your Recorded Diets</h5>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Food Name</th>
+                                    <th scope="col">Quantity (g)</th>
+                                    <th scope="col">Calories (kcal)</th>
+                                    <th scope="col">Protein (g)</th>
+                                    <th scope="col">Carbs (g)</th>
+                                    <th scope="col">Fats (g)</th>
+                                    <th scope="col">Recorded Time</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="diet-records"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>     
+    </div>
+    <footer>
+        <div class="copyright">COPYRIGHT © 2024 Workout Hub</div>
+    </footer> 
+</body>
+</html>

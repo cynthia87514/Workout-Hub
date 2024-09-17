@@ -1,0 +1,100 @@
+h5.card-title {
+    color: #2c3e50;
+    font-weight: 600;
+    text-align: left;
+}
+.edit-icon {
+    top: 17px;
+    right: 16px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+#edit-password-btn {
+    top: auto;
+    bottom: 165px;
+}
+#save-personal-btn, #save-password-btn {
+    display: none;
+    background-color: #27374D !important;
+    color: white !important;
+}
+#avatar-img {
+    box-sizing: border-box;
+    width: 150px !important;
+    height: 150px !important;
+    object-fit: cover;
+}
+button[disabled] {
+    cursor: not-allowed !important;
+    opacity: 0.65 !important;
+}
+#username-title {
+    margin-bottom: 0;
+}
+input[disabled] {
+    cursor: not-allowed;
+    background-color: #e9ecef;
+}
+.gender-toggle {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    background-color: #e9ecef;
+    margin-bottom: 20px;
+    padding: 5px;
+}
+.btn-toggle {
+    flex: 1;
+    padding: 10px;
+    background-color: transparent;
+    border: none;
+    color: #6c757d;
+    font-weight: bold;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+.btn-toggle.active {
+    color: white;
+}
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+    opacity: 0.9;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-weight: bold;
+    transform: translateX(-50%);
+}
+.toast.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* hover 效果 */
+button, .edit-icon {
+    transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease !important;
+}
+button:hover, .edit-icon:hover {
+    transform: translateY(-2px) !important;
+    opacity: 0.9 !important;
+}
+
+@media (min-width: 1285px) {
+    .container {
+        max-width: 1140px !important;
+    }
+}

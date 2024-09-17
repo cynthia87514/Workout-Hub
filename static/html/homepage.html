@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Hub</title>
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/homepage.css"/>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" defer></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" defer></script>
+    <script src="/static/js/header.js" defer></script>
+    <script src="/static/js/homepage.js" defer></script>
+</head>
+<body>
+    <header>
+        <nav class="nav-bar">
+            <div class="left">Workout Hub</div>
+            <div class="right">
+                <div class="menu">
+                    <div class="start hide">Start</div>
+                    <div class="records hide">Records</div>
+                    <div class="diet hide">Diet</div>
+                    <div class="dropdownBox hide">
+                        <img src="/static/images/user.png" class="avatar-icon rounded-circle" alt="User Avatar" width="40" height="40" id="avatarDropdown">
+                        <div class="dropdown-content" id="dropdownContent">
+                            <div class="profile">Profile</div>
+                            <div class="bodyInfo">Body Info</div>
+                            <div class="logout">Log Out</div>
+                        </div>
+                    </div>
+                    <div class="login">Log in</div>
+                </div>
+            </div>
+        </nav>
+        <div id="loginDialog" class="auth-modal">
+            <div class="auth-modal-content">
+                <span class="auth-close" onclick="closeModal()">&times;</span>
+                <h2 class="auth-modal-title">Log In</h2>
+                <form class="loginForm" action="/api/user/auth" method="put" onsubmit="loginUser(event)">
+                    <div class="auth-input-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" name="email" required>
+                    </div>
+                    <div class="auth-input-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" name="password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Log In</button>
+                    <div class="divider">
+                        <span>Or With</span>
+                    </div>
+                </form>
+                <button class="auth-btn" id="google-login-btn">
+                    <img src="/static/images/google.png" alt="Google Logo" class="google-logo">
+                    Continue with Google
+                </button>
+                <div class="switch-auth">
+                    Don't have an account? <a href="#" class="switch-modal" data-target="registerDialog">Sign Up</a>
+                </div>
+            </div>
+        </div>
+        <div id="registerDialog" class="auth-modal">
+            <div class="auth-modal-content">
+                <span class="auth-close" onclick="closeModal()">&times;</span>
+                <h2 class="auth-modal-title">Sign Up</h2>
+                <form class="signupForm" action="/api/user" method="post" onsubmit="registerUser(event)">
+                    <div class="auth-input-group">
+                        <label for="registerUsername">Username</label>
+                        <input type="text" id="registerUsername" name="username" required>
+                    </div>
+                    <div class="auth-input-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" name="email" required>
+                    </div>
+                    <div class="auth-input-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" name="password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Sign Up</button>
+                </form>
+                <div class="switch-auth">
+                    Already have an account? <a href="#" class="switch-modal" data-target="loginDialog">Log In</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section class="intro">
+            <div class="overlay">
+                <div class="content">
+                    <h1>Workout Hub</h1>
+                    <hr>
+                    <p>Platform for Fitness Enthusiasts</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <section class="section about-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <img src="/static/images/about.jpg" alt="About Us Image" class="img-fluid">
+                </div>
+                <div class="col-md-6">
+                    <h2>About</h2>
+                    <hr class="red-line">
+                    <p class="intro-text">Your all-in-one platform for tracking workouts, managing nutrition, and reaching your fitness goals.</p>
+                    <ul>
+                        <li><a href="#quick-start"><span class="arrow">&gt;</span> Quick Start Workout</a></li>
+                        <li><a href="#track-records"><span class="arrow">&gt;</span> Track Workout Records</a></li>
+                        <li><a href="#plan-diet"><span class="arrow">&gt;</span> Plan Diet</a></li>
+                        <li><a href="#monitor-metrics"><span class="arrow">&gt;</span> Monitor Body Metrics</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="quick-start" class="section section-1">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-5">
+                    <h2>Quick Start Workout</h2>
+                    <hr class="red-line">
+                    <p>Easily begin your workout by starting an empty workout or using one of your templates.</p>
+                </div>
+                <div class="col-md-7">
+                    <video width="100%" height="auto" controls autoplay muted loop>
+                        <source src="/static/videos/start.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="track-records" class="section section-2">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-7">
+                    <video width="100%" height="auto" controls autoplay muted loop>
+                        <source src="/static/videos/records.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="col-md-5">
+                    <h2>Track Workout Records</h2>
+                    <hr class="red-line">
+                    <p>Monitor your progress over time with detailed workout records stored in your personal calendar.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="plan-diet" class="section section-3">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-5">
+                    <h2>Plan Diet</h2>
+                    <hr class="red-line">
+                    <p>Track your daily calories and macronutrient intake to meet your fitness goals.</p>
+                </div>
+                <div class="col-md-7">
+                    <video width="100%" height="auto" controls autoplay muted loop>
+                        <source src="/static/videos/diet.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="monitor-metrics" class="section section-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-7">
+                    <video width="100%" height="auto" controls autoplay muted loop>
+                        <source src="/static/videos/bodyinfo.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="col-md-5">
+                    <h2>Monitor Body Metrics</h2>
+                    <hr class="red-line">
+                    <p>Keep an eye on your body fat, BMR, TDEE, and other important health indicators.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="copyright">COPYRIGHT © 2024 Workout Hub</div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Hub</title>
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="/static/css/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/start.css"/>
+    <script src="/static/js/header.js" defer></script>
+    <script src="/static/js/start.js" defer></script>
+</head>
+<body>
+    <header>
+        <nav class="nav-bar">
+            <div class="left">Workout Hub</div>
+            <div class="right">
+                <div class="menu">
+                    <div class="start hide">Start</div>
+                    <div class="records hide">Records</div>
+                    <div class="diet hide">Diet</div>
+                    <div class="dropdownBox hide">
+                        <img src="/static/images/user.png" class="avatar-icon rounded-circle" alt="User Avatar" id="avatarDropdown">
+                        <div class="dropdown-content" id="dropdownContent">
+                            <div class="profile">Profile</div>
+                            <div class="bodyInfo">Body Info</div>
+                            <div class="logout">Log Out</div>
+                        </div>
+                    </div>
+                    <div class="login">Log in</div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="view">
+            <div class="title">Start Workout</div>
+            <div class="quickStart">
+                <div class="qS-text">Quick Start</div>
+                <button class="qS-button">Start an Empty Workout</button>
+            </div>
+            <div class="templates">
+                <div class="templates-up">
+                    <div class="t-text">Templates</div>
+                    <button class="add-template" onclick="clickNewTemplate()">New Template</button>
+                </div>
+                <hr>
+                <div class="templates-down">
+                    <div class="myTemplates">
+                        <div class="mT-text">My Templates</div>
+                        <div class="template-card-box">
+                            <div id="placeholderCard" onclick="clickNewTemplate()">
+                                <div class="template-title">Tap "New Template" to Add New Template</div>
+                                <img src="/static/images/template.png" alt="Add New Template" class="template-image">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="exampleTemplates">
+                        <div class="eT-text">Example Templates</div>
+                        <div class="template-card-box">
+                            <div class="template-card">
+                                <div class="template-title">Chest and Triceps</div>
+                                <ul class="template-content">
+                                    <li>Barbell Bench Press - Medium Grip</li>
+                                    <li>Barbell Incline Bench Press - Medium Grip</li>
+                                    <li>Machine Shoulder (Military) Press</li>
+                                    <li>Dumbbell Raise</li>
+                                </ul>
+                            </div>
+                            <div class="template-card">
+                                <div class="template-title">Back and Biceps</div>
+                                <ul class="template-content">
+                                    <li>Barbell Deadlift</li>
+                                    <li>Elevated Cable Rows</li>
+                                    <li>Wide-Grip Lat Pulldown</li>
+                                    <li>Barbell Curl</li>
+                                </ul>
+                            </div>
+                            <div class="template-card">
+                                <div class="template-title">Legs</div>
+                                <ul class="template-content">
+                                    <li>Barbell Full Squat</li>
+                                    <li>Leg Extensions</li>
+                                    <li>Flat Bench Lying Leg Raise</li>
+                                    <li>Thigh Abductor</li>
+                                </ul>
+                            </div>
+                            <div class="template-card">
+                                <div class="template-title">Strong 5x5</div>
+                                <ul class="template-content">
+                                    <li>Barbell Full Squat</li>
+                                    <li>Barbell Bench Press - Medium Grip</li>
+                                    <li>Bent Over Barbell Row</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="workout hide">
+            <div class="topic-container">
+                <input type="text" class="topic-input hide" value="">
+                <div class="topic"></div>
+                <img src="/static/images/pencil.png" class="edit-icon" alt="edit">
+                <img src="/static/images/calendar.png" class="calendar-icon" alt="calendar" id="calendarIcon">
+                <input type="date" id="datePicker" class="hide"/>
+                <!-- <img src="/static/images/camera.png" class="camera-icon" alt="camera"> -->
+            </div>
+            <button class="add-button">Add Exercises</button>
+            <button class="finish">Finish Workout</button>
+        </section>
+        <section class="newTemplate hide">
+            <div class="template-topic-container">
+                <input type="text" class="templateTopic-input hide" value="">
+                <div class="templateTopic"></div>
+                <img src="/static/images/pencil.png" class="template-edit-icon" alt="edit">
+            </div>
+            <button class="templateAdd">Add Exercises</button>
+            <button class="templateSave">Save Template</button>
+        </section>
+    </main>
+    <footer>
+        <div class="copyright">COPYRIGHT © 2024 Workout Hub</div>
+    </footer>
+    <dialog id="confirmationDialog">
+        <div class="dialog-content">
+            <p></p>
+            <div class="dialog-buttons">
+                <button id="saveButton">SAVE</button>
+                <button id="discardButton">DISCARD</button>
+            </div>
+        </div>
+    </dialog>
+    <dialog id="addExerciseModal" class="exercise-modal">
+        <div class="modal-header">
+            <img src="/static/images/close.png" class="close-button" alt="close" onclick="closeAddExerciseModal()">
+            <button class="modal-title" disabled>Add</button>
+        </div>
+        <div class="exercise-content">
+            <div class="search-container">
+                <input type="text" placeholder="Search" id="exerciseSearch">
+                <img src="/static/images/search.png" alt="Search" class="search-icon" onclick="searchExercises()">
+            </div>
+            <div class="filters">
+                <button class="filter-button" onclick="toggleDropdown('bodyPartDropdown')">Body Part</button>
+                <button class="filter-button" onclick="toggleDropdown('equipmentDropdown')">Equipment</button>
+                <button class="filter-button" onclick="toggleDropdown('categoryDropdown')">Category</button>
+            </div>
+            <div class="dropdown hide" id="bodyPartDropdown"></div>
+            <div class="dropdown hide" id="equipmentDropdown"></div>
+            <div class="dropdown hide" id="categoryDropdown"></div>
+            <div class="exercise-list" id="exerciseList"></div>
+            <div class="no-results-message hide" id="noResultsMessage">"No results found"</div>
+        </div>
+    </dialog>
+    <dialog id="infoDialog" class="info-dialog">
+    <div class="dialog-content">
+        <h2 id="dialogExerciseName"></h2>
+        <div id="dialogImages" class="dialog-images"></div>
+        <div class="instructions-header">
+            <h3>Instructions</h3>
+            <span id="dialogCategory" class="category-badge"></span>
+        </div>
+        <ol id="dialogInstructions"></ol>
+        <button class="info-dialog-close" onclick="closeInfoDialog()">Close</button>
+    </div>
+</dialog>
+</body>
+</html>
