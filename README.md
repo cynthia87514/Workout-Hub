@@ -1,4 +1,4 @@
-# [Workout Hub]
+# Workout Hub
 
 ### A platform for tracking workouts, managing nutrition, and reaching your fitness goals.
 
